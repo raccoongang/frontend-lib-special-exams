@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Spinner } from '@edx/paragon';
 import { ExamInstructions } from '../ExamInstructions';
+import { ExamTimer } from '../ExamTimer';
 import {
   getExamData,
   getAttemptData,
@@ -55,9 +56,16 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
     );
   }
 
-  return sequence.isTimeLimited && !examStarted
-    ? <ExamInstructions startExam={startExamHandler} examDuration={examDuration} />
-    : children;
+  return (
+    <div>
+      <ExamTimer />
+      {
+        sequence.isTimeLimited && !examStarted
+          ? <ExamInstructions startExam={startExamHandler} examDuration={examDuration} />
+          : children
+      }
+    </div>
+  );
 };
 const StoreWrapper = connect(mapCoursewareStateToProps, {})(StoreWrapperComp);
 

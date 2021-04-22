@@ -1,6 +1,5 @@
 export {
-  getExamData,
-  getAttemptData,
+  getExamAttemptsData,
   startExam,
 } from './thunks';
 

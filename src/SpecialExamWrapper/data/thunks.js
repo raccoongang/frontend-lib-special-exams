@@ -1,54 +1,38 @@
 import { logError } from '@edx/frontend-platform/logging';
 import {
-  fetchExamData,
-  fetchUserAtemptsData,
+  fetchExamAttemptsData,
   updateAttempt,
 } from './api';
 import {
   setExamStarted,
   setIsLoading,
-  setAttempt,
-  updateExam,
+  updateExamAttempts,
 } from './slice';
 
-export function getExamData(courseId, contentId) {
+export function getExamAttemptsData(courseId, contentId) {
   return async (dispatch) => {
     dispatch(setIsLoading({ isLoading: true }));
-    const data = await fetchExamData(courseId, contentId);
-    dispatch(setIsLoading({ isLoading: false }));
+    const data = await fetchExamAttemptsData(courseId, contentId);
+    console.log(data);
     dispatch(
-      updateExam({
-        examId: data.id,
-        examDuration: data.time_limit_mins,
+      updateExamAttempts({
+        exam: data.exam,
+        activeAttempt: data.active_attempts,
       }),
     );
-  };
-}
-
-export function getAttemptData(userId, courseId) {
-  return async (dispatch) => {
-    dispatch(setIsLoading({ isLoading: true }));
-    const data = await fetchUserAtemptsData(userId, courseId);
     dispatch(setIsLoading({ isLoading: false }));
-    if (Object.keys(data).length > 0) {
-      const attemptData = data[0];
-      dispatch(setAttempt({ attempt: attemptData.attempt }));
-      dispatch(setExamStarted({
-        examStarted: attemptData.attempt.status === 'started',
-      }));
-    }
   };
 }
 
 export function startExam() {
   return async (dispatch, getState) => {
-    const { examId } = getState().exam;
-    if (!examId) {
+    const { exam } = getState().exam;
+    if (!exam.id) {
       logError('Failed to start exam. No exam id.');
       return;
     }
     dispatch(setIsLoading({ isLoading: true }));
-    const data = await updateAttempt(examId);
+    const data = await updateAttempt(exam.id);
     dispatch(setIsLoading({ isLoading: false }));
     if (data && data.exam_attempt_id) {
       dispatch(setExamStarted({ examStarted: true }));

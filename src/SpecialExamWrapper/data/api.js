@@ -1,17 +1,9 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-export async function fetchExamData(courseId, contentId) {
+export async function fetchExamAttemptsData(courseId, contentId) {
   const url = new URL(
-    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/exam/course_id/${courseId}/content_id/${contentId}`,
-  );
-  const { data } = await getAuthenticatedHttpClient().get(url.href);
-  return data;
-}
-
-export async function fetchUserAtemptsData(userId, courseId) {
-  const url = new URL(
-    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/active_exams_for_user?user_id=${userId}&course_id=${encodeURIComponent(courseId)}`,
+    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/exam_attempts/course_id/${courseId}/content_id/${contentId}`,
   );
   const { data } = await getAuthenticatedHttpClient().get(url.href);
   return data;

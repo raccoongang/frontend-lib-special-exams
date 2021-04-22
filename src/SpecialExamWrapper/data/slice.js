@@ -4,33 +4,26 @@ import { createSlice } from '@reduxjs/toolkit';
 export const examSlice = createSlice({
   name: 'exam',
   initialState: {
-    examId: null,
     isLoading: true,
-    examDuration: null,
-    attempt: {},
-    examStarted: false,
+    activeAttempt: {},
+    exam: {},
   },
   reducers: {
     setIsLoading: (state, { payload }) => {
       state.isLoading = payload.isLoading;
     },
-    setExamStarted: (state, { payload }) => {
-      state.examStarted = payload.examStarted;
-    },
-    setAttempt: (state, { payload }) => {
-      state.attempt = payload.attempt;
-    },
-    updateExam: (state, { payload }) => {
-      state.examId = payload.examId;
-      state.examDuration = payload.examDuration;
+    updateExamAttempts: (state, { payload }) => {
+      console.log('updateExamAttempts');
+      console.log(payload);
+      state.exam = payload.exam;
+      state.activeAttempt = payload.activeAttempt;
     },
     getExamId: (state) => state.examId,
   },
 });
 
 export const {
-  setIsLoading, setExamStarted, setAttempt, updateExam,
-  getExamId,
+  setIsLoading, updateExamAttempts, getExamId,
 } = examSlice.actions;
 
 export default examSlice.reducer;

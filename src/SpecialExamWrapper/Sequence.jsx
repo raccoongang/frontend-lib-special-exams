@@ -6,8 +6,7 @@ import { Spinner } from '@edx/paragon';
 import { ExamInstructions } from '../ExamInstructions';
 import { ExamTimer } from '../ExamTimer';
 import {
-  getExamData,
-  getAttemptData,
+  getExamAttemptsData,
   startExam,
   store,
 } from './data';
@@ -32,9 +31,7 @@ const mapCoursewareStateToProps = (state) => {
  */
 const StoreWrapperComp = ({ sequence, courseId, children }) => {
   const [examState, setExamState] = useState(store.getState());
-  const { authenticatedUser } = useContext(AppContext);
-  const { isLoading, examStarted, examDuration } = examState.exam;
-  const { userId } = authenticatedUser;
+  const { isLoading, exam, activeAttempt } = examState.exam;
 
   const storeListener = () => {
     setExamState(store.getState());
@@ -44,8 +41,7 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
 
   useEffect(() => {
     store.subscribe(storeListener);
-    getExamData(courseId, sequence.id)(store.dispatch);
-    getAttemptData(userId, courseId)(store.dispatch);
+    getExamAttemptsData(courseId, sequence.id)(store.dispatch);
   }, []);
 
   if (isLoading) {
@@ -58,11 +54,13 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
 
   return (
     <div>
-      <ExamTimer />
       {
-        sequence.isTimeLimited && !examStarted
-          ? <ExamInstructions startExam={startExamHandler} examDuration={examDuration} />
-          : children
+        activeAttempt && <ExamTimer />
+      }
+      {
+        !sequence.isTimeLimited && exam.attempt.attempt_status === 'started'
+          ? children
+          : <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />
       }
     </div>
   );

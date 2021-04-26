@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Alert,
@@ -10,7 +11,7 @@ import {
   VisibilityOff,
 } from '@edx/paragon/icons';
 
-const ExamTimer = () => {
+const ExamTimer = ({ activeAttempt, endExamHandler }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [isShowTimer, showTimer, hideTimer] = useToggle(true);
 
@@ -18,7 +19,7 @@ const ExamTimer = () => {
     <Alert variant="info">
       <div className="row">
         <div className="col col-8">
-          You are taking &#34;<Alert.Link href="#">Subsection</Alert.Link>&#34;
+          You are taking &#34;<Alert.Link href="">{activeAttempt.exam_display_name}</Alert.Link>&#34;
           as a timed exam. {
             isShowMore
               ? (
@@ -35,7 +36,7 @@ const ExamTimer = () => {
         <div className="col">
           <div className="row">
             <div className="col">
-              <Button variant="outline-primary">End My Exam</Button>
+              <Button variant="outline-primary" onClick={endExamHandler}>End My Exam</Button>
             </div>
             {
               isShowTimer
@@ -47,6 +48,13 @@ const ExamTimer = () => {
       </div>
     </Alert>
   );
+};
+
+ExamTimer.propTypes = {
+  activeAttempt: PropTypes.shape({
+    exam_display_name: PropTypes.number.isRequired,
+  }).isRequired,
+  endExamHandler: PropTypes.func.isRequired,
 };
 
 // eslint-disable-next-line import/prefer-default-export

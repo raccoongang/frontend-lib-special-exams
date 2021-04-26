@@ -18,3 +18,12 @@ export async function updateAttempt(examId) {
   const { data } = await getAuthenticatedHttpClient().post(url.href, payload);
   return data;
 }
+
+export async function stopAttempt(attemptId) {
+  const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`);
+  const payload = {
+    action: 'stop',
+  };
+  const { data } = await getAuthenticatedHttpClient().put(url.href, payload);
+  return data;
+}

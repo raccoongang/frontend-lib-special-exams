@@ -27,3 +27,21 @@ export async function stopAttempt(attemptId) {
   const { data } = await getAuthenticatedHttpClient().put(url.href, payload);
   return data;
 }
+
+export async function continueAttempt(attemptId) {
+  const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`);
+  const payload = {
+    action: 'start',
+  };
+  const { data } = await getAuthenticatedHttpClient().put(url.href, payload);
+  return data;
+}
+
+export async function submitAttempt(attemptId) {
+  const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`);
+  const payload = {
+    action: 'submit',
+  };
+  const { data } = await getAuthenticatedHttpClient().put(url.href, payload);
+  return data;
+}

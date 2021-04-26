@@ -1,13 +1,14 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { AppContext } from '@edx/frontend-platform/react';
 import { Spinner } from '@edx/paragon';
 import { ExamInstructions } from '../ExamInstructions';
+import { SubmitExamInstructions } from '../SubmitExamInstructions';
 import { ExamTimer } from '../ExamTimer';
 import {
   getExamAttemptsData,
   startExam,
+  endExam,
   store,
 } from './data';
 
@@ -15,6 +16,8 @@ const mapCoursewareStateToProps = (state) => {
   const { courseware } = state;
   return { courseId: courseware.courseId };
 };
+
+const READY_TO_SUBMIT = 'ready_to_submit';
 
 /**
  * ExamStoreWrapperComp is the component responsible for handling special exams.
@@ -38,6 +41,7 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
   };
 
   const startExamHandler = () => startExam()(store.dispatch, store.getState);
+  const endExamHandler = () => endExam()(store.dispatch, store.getState);
 
   useEffect(() => {
     store.subscribe(storeListener);
@@ -52,16 +56,22 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
     );
   }
 
+  let content;
+  if (sequence.isTimeLimited && exam.attempt.attempt_status === READY_TO_SUBMIT) {
+    content = <SubmitExamInstructions />;
+  } else if (sequence.isTimeLimited && Object.keys(exam.attempt).length === 0) {
+    content = <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />;
+  } else {
+    content = children;
+  }
+
   return (
     <div>
       {
-        activeAttempt && <ExamTimer />
+        Object.keys(activeAttempt).length !== 0
+        && <ExamTimer activeAttempt={activeAttempt} endExamHandler={endExamHandler} />
       }
-      {
-        !sequence.isTimeLimited && exam.attempt.attempt_status === 'started'
-          ? children
-          : <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />
-      }
+      { content }
     </div>
   );
 };

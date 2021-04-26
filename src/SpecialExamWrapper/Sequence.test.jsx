@@ -5,8 +5,6 @@ import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { AppContext } from '@edx/frontend-platform/react';
 import {
-  getExamData,
-  getAttemptData,
   startExam,
   store,
 } from './data';
@@ -14,12 +12,8 @@ import { SequenceExamWrapper } from './Sequence';
 
 jest.mock('./data', () => ({
   store: {},
-  getExamData: jest.fn(),
-  getAttemptData: jest.fn(),
   startExam: jest.fn(),
 }));
-getExamData.mockReturnValue(jest.fn());
-getAttemptData.mockReturnValue(jest.fn());
 startExam.mockReturnValue(jest.fn());
 
 store.subscribe = jest.fn();

@@ -13,8 +13,6 @@ export const examSlice = createSlice({
       state.isLoading = payload.isLoading;
     },
     updateExamAttempts: (state, { payload }) => {
-      console.log('updateExamAttempts');
-      console.log(payload);
       state.exam = payload.exam;
       state.activeAttempt = payload.activeAttempt;
     },
@@ -23,7 +21,7 @@ export const examSlice = createSlice({
 });
 
 export const {
-  setIsLoading, updateExamAttempts, getExamId,
+  setIsLoading, updateExamAttempts, getExamId, setAttempt,
 } = examSlice.actions;
 
 export default examSlice.reducer;

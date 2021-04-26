@@ -75,7 +75,7 @@ export function continueExam() {
     const { exam } = getState().exam;
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
-      logError('Failed to stop exam. No attempt id.');
+      logError('Failed to continue exam. No attempt id.');
       return;
     }
     dispatch(setIsLoading({ isLoading: true }));
@@ -98,7 +98,7 @@ export function submitExam() {
     const { exam } = getState().exam;
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
-      logError('Failed to stop exam. No attempt id.');
+      logError('Failed to submit exam. No attempt id.');
       return;
     }
     dispatch(setIsLoading({ isLoading: true }));

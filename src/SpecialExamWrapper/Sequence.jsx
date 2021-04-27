@@ -6,6 +6,7 @@ import { ExamInstructions } from '../ExamInstructions';
 import { SubmitExamInstructions } from '../SubmitExamInstructions';
 import { SubmittedExamInstructions } from '../SubmittedExamInstructions';
 import { ExamTimer } from '../ExamTimer';
+import { ExamStatus } from '../constants'
 import {
   getExamAttemptsData,
   startExam,
@@ -19,9 +20,6 @@ const mapCoursewareStateToProps = (state) => {
   const { courseware } = state;
   return { courseId: courseware.courseId };
 };
-
-const READY_TO_SUBMIT = 'ready_to_submit';
-const SUBMITTED = 'submitted';
 
 /**
  * ExamStoreWrapperComp is the component responsible for handling special exams.
@@ -63,11 +61,11 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
   }
 
   let content;
-  if (sequence.isTimeLimited && exam.attempt.attempt_status === READY_TO_SUBMIT) {
+  if (sequence.isTimeLimited && exam.attempt.attempt_status === ExamStatus.READY_TO_SUBMIT) {
     content = <SubmitExamInstructions submitExam={submitExamHandler} continueExam={continueExamHandler} />;
   } else if (sequence.isTimeLimited && Object.keys(exam.attempt).length === 0) {
     content = <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />;
-  } else if (sequence.isTimeLimited && exam.attempt.attempt_status === SUBMITTED) {
+  } else if (sequence.isTimeLimited && exam.attempt.attempt_status === ExamStatus.SUBMITTED) {
     content = <SubmittedExamInstructions />;
   } else {
     content = children;

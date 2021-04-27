@@ -4,11 +4,14 @@ import { connect } from 'react-redux';
 import { Spinner } from '@edx/paragon';
 import { ExamInstructions } from '../ExamInstructions';
 import { SubmitExamInstructions } from '../SubmitExamInstructions';
+import { SubmittedExamInstructions } from '../SubmittedExamInstructions';
 import { ExamTimer } from '../ExamTimer';
 import {
   getExamAttemptsData,
   startExam,
   endExam,
+  continueExam,
+  submitExam,
   store,
 } from './data';
 
@@ -18,6 +21,7 @@ const mapCoursewareStateToProps = (state) => {
 };
 
 const READY_TO_SUBMIT = 'ready_to_submit';
+const SUBMITTED = 'submitted';
 
 /**
  * ExamStoreWrapperComp is the component responsible for handling special exams.
@@ -42,6 +46,8 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
 
   const startExamHandler = () => startExam()(store.dispatch, store.getState);
   const endExamHandler = () => endExam()(store.dispatch, store.getState);
+  const continueExamHandler = () => continueExam()(store.dispatch, store.getState);
+  const submitExamHandler = () => submitExam()(store.dispatch, store.getState);
 
   useEffect(() => {
     store.subscribe(storeListener);
@@ -58,15 +64,17 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
 
   let content;
   if (sequence.isTimeLimited && exam.attempt.attempt_status === READY_TO_SUBMIT) {
-    content = <SubmitExamInstructions />;
+    content = <SubmitExamInstructions submitExam={submitExamHandler} continueExam={continueExamHandler} />;
   } else if (sequence.isTimeLimited && Object.keys(exam.attempt).length === 0) {
     content = <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />;
+  } else if (sequence.isTimeLimited && exam.attempt.attempt_status === SUBMITTED) {
+    content = <SubmittedExamInstructions />;
   } else {
     content = children;
   }
 
   return (
-    <div>
+    <div className="d-flex flex-column justify-content-center">
       {
         Object.keys(activeAttempt).length !== 0
         && <ExamTimer activeAttempt={activeAttempt} endExamHandler={endExamHandler} />

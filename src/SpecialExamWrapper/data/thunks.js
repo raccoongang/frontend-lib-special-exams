@@ -3,6 +3,8 @@ import {
   fetchExamAttemptsData,
   updateAttempt,
   stopAttempt,
+  continueAttempt,
+  submitAttempt,
 } from './api';
 import {
   setIsLoading,
@@ -55,6 +57,52 @@ export function startExam() {
     }
     dispatch(setIsLoading({ isLoading: true }));
     const data = await updateAttempt(exam.id);
+    if (data && data.exam_attempt_id) {
+      const attemptData = await fetchExamAttemptsData(exam.course_id, exam.content_id);
+      dispatch(
+        updateExamAttempts({
+          exam: attemptData.exam,
+          activeAttempt: attemptData.active_attempt,
+        }),
+      );
+    }
+    dispatch(setIsLoading({ isLoading: false }));
+  };
+}
+
+export function continueExam() {
+  return async (dispatch, getState) => {
+    const { exam } = getState().exam;
+    const attemptId = exam.attempt.attempt_id;
+    if (!attemptId) {
+      logError('Failed to continue exam. No attempt id.');
+      return;
+    }
+    dispatch(setIsLoading({ isLoading: true }));
+    const data = await continueAttempt(attemptId);
+    if (data && data.exam_attempt_id) {
+      const attemptData = await fetchExamAttemptsData(exam.course_id, exam.content_id);
+      dispatch(
+        updateExamAttempts({
+          exam: attemptData.exam,
+          activeAttempt: attemptData.active_attempt,
+        }),
+      );
+    }
+    dispatch(setIsLoading({ isLoading: false }));
+  };
+}
+
+export function submitExam() {
+  return async (dispatch, getState) => {
+    const { exam } = getState().exam;
+    const attemptId = exam.attempt.attempt_id;
+    if (!attemptId) {
+      logError('Failed to submit exam. No attempt id.');
+      return;
+    }
+    dispatch(setIsLoading({ isLoading: true }));
+    const data = await submitAttempt(attemptId);
     if (data && data.exam_attempt_id) {
       const attemptData = await fetchExamAttemptsData(exam.course_id, exam.content_id);
       dispatch(

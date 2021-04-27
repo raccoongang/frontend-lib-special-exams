@@ -68,7 +68,7 @@ const StoreWrapperComp = ({ sequence, courseId, children }) => {
   } else if (sequence.isTimeLimited && Object.keys(exam.attempt).length === 0) {
     content = <ExamInstructions startExam={startExamHandler} examDuration={exam.time_limit_mins} />;
   } else if (sequence.isTimeLimited && exam.attempt.attempt_status === SUBMITTED) {
-    content = <SubmittedExamInstructions />
+    content = <SubmittedExamInstructions />;
   } else {
     content = children;
   }

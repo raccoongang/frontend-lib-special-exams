@@ -6,7 +6,7 @@ import { ExamInstructions } from '../ExamInstructions';
 import { SubmitExamInstructions } from '../SubmitExamInstructions';
 import { SubmittedExamInstructions } from '../SubmittedExamInstructions';
 import { ExamTimer } from '../ExamTimer';
-import { ExamStatus } from '../constants'
+import { ExamStatus } from '../constants';
 import {
   getExamAttemptsData,
   startExam,

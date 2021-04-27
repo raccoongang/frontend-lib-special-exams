@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
 
-const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => {
-  return <div>
+const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
+  <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
         <FormattedMessage
@@ -58,8 +58,8 @@ const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => {
         />
       </p>
     </div>
-  </div>;
-});
+  </div>
+));
 
 ExamInstructions.propTypes = {
   examDuration: PropTypes.number.isRequired,

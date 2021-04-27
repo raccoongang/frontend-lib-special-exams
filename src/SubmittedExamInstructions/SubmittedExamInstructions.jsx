@@ -13,12 +13,10 @@ const SubmittedExamInstructions = () => (
     <p>
       <FormattedMessage
         id="exam.submittedExamInstructions.text"
-        defaultMessage={"After the due date has passed, you can review the exam,"
-          + " but you cannot change your answers."
-        }
+        defaultMessage={'After the due date has passed, you can review the exam,'
+        + ' but you cannot change your answers.'}
       />
     </p>
-      
   </Container>
 );
 

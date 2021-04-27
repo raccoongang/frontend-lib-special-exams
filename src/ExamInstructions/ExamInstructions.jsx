@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
 
-const ExamInstructions = ({ examDuration, startExam }) => (
-  <div>
+const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => {
+  return <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
         <FormattedMessage
@@ -15,14 +15,14 @@ const ExamInstructions = ({ examDuration, startExam }) => (
       </div>
       {/* eslint-disable-next-line react/no-danger */}
       <p dangerouslySetInnerHTML={{
-        __html: <FormattedMessage
-          id="exam.startExamInstructions.text"
-          defaultMessage={'This exam has a time limit associated with it. '
-            + '<strong> To pass this exam, you must complete the problems in the time allowed. </strong>'
-            + 'After you select <strong> I am ready to start this timed exam, </strong>'
-            + 'you will have {examDuration} minutes to complete and submit the exam.'}
-          values={{ examDuration }}
-        />,
+        __html: 
+        intl.formatMessage({
+          id: "exam.startExamInstructions.text",
+          defaultMessage: 'This exam has a time limit associated with it. '
+          + '<strong> To pass this exam, you must complete the problems in the time allowed. </strong>'
+          + 'After you select <strong> I am ready to start this timed exam, </strong>'
+          + 'you will have {examDuration} minutes to complete and submit the exam.',
+        }, { examDuration })
       }}
       />
       <Button
@@ -52,8 +52,8 @@ const ExamInstructions = ({ examDuration, startExam }) => (
         />
       </p>
     </div>
-  </div>
-);
+  </div>;
+});
 
 ExamInstructions.propTypes = {
   examDuration: PropTypes.number.isRequired,

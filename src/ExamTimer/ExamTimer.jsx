@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Alert,
@@ -12,7 +12,7 @@ import {
   VisibilityOff,
 } from '@edx/paragon/icons';
 
-const ExamTimer = injectIntl(({ activeAttempt, endExamHandler, intl }) => {
+const ExamTimer = ({ activeAttempt, endExamHandler }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [isShowTimer, showTimer, hideTimer] = useToggle(true);
 
@@ -37,8 +37,7 @@ const ExamTimer = injectIntl(({ activeAttempt, endExamHandler, intl }) => {
                     id="exam.examTimer.showLess"
                     defaultMessage={'The timer on the right shows the time remaining in the exam. '
                       + 'To receive credit for problems, you must select &#34;Submit&#34;'
-                      + 'for each problem before you select &#34;End My Exam&#34;.'
-                    }
+                      + 'for each problem before you select &#34;End My Exam&#34;.'}
                   />
                   <Alert.Link onClick={showLess}>
                     <FormattedMessage
@@ -60,10 +59,10 @@ const ExamTimer = injectIntl(({ activeAttempt, endExamHandler, intl }) => {
         </div>
         <div className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0">
           <Button className="mr-3" variant="outline-primary" onClick={endExamHandler}>
-          <FormattedMessage
-            id="exam.examTimer.endExam"
-            defaultMessage="End My Exam"
-          />
+            <FormattedMessage
+              id="exam.examTimer.endExam"
+              defaultMessage="End My Exam"
+            />
           </Button>
           {
             isShowTimer
@@ -74,7 +73,7 @@ const ExamTimer = injectIntl(({ activeAttempt, endExamHandler, intl }) => {
       </div>
     </Alert>
   );
-});
+};
 
 ExamTimer.propTypes = {
   activeAttempt: PropTypes.shape({

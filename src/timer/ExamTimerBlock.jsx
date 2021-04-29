@@ -15,10 +15,12 @@ let ExamTimerBlock = ({ activeAttempt, stopExam }) => {
         <div>
           <FormattedMessage
             id="exam.examTimer.text"
-            defaultMessage='You are taking "{exam_link}" as a timed exam. '
-            values={{
-              exam_link: <Alert.Link href={activeAttempt.exam_url_path}>{activeAttempt.exam_display_name}</Alert.Link>
-            }}
+            defaultMessage='You are taking &#34;'
+          />
+          <Alert.Link href={activeAttempt.exam_url_path}>{activeAttempt.exam_display_name}</Alert.Link>
+          <FormattedMessage
+            id="exam.examTimer.text"
+            defaultMessage=' &#34;as a timed exam. '
           />
           {
             isShowMore

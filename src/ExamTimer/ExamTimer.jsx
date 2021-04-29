@@ -24,7 +24,7 @@ const ExamTimer = ({ activeAttempt, endExamHandler }) => {
             id="exam.examTimer.text"
             defaultMessage='You are taking &#34;'
           />
-          <Alert.Link href="">{activeAttempt.exam_display_name}</Alert.Link>
+          <Alert.Link href={activeAttempt.exam_url_path}>{activeAttempt.exam_display_name}</Alert.Link>
           <FormattedMessage
             id="exam.examTimer.text"
             defaultMessage=' &#34;as a timed exam. '
@@ -78,6 +78,7 @@ const ExamTimer = ({ activeAttempt, endExamHandler }) => {
 ExamTimer.propTypes = {
   activeAttempt: PropTypes.shape({
     exam_display_name: PropTypes.number.isRequired,
+    exam_url_path: PropTypes.string.isRequired,
   }).isRequired,
   endExamHandler: PropTypes.func.isRequired,
 };

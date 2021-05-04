@@ -1,9 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
+import { withExamStore } from "../hocs";
+import { continueExam, submitExam } from "../data";
 
-const SubmitExamInstructions = ({ submitExam, continueExam }) => (
+let SubmitExamInstructions = ({ submitExam, continueExam }) => (
   <Container className="border py-5 mb-4">
     <h3 className="h3">
       <FormattedMessage
@@ -13,8 +14,8 @@ const SubmitExamInstructions = ({ submitExam, continueExam }) => (
     </h3>
     <p>
       <FormattedMessage
-        id="exam.submitExamInstructions.warningText"
-        defaultMessage="Make sure that you have selected &#34;Submit&#34; for each problem before you submit your exam."
+        id='exam.submitExamInstructions.warningText'
+        defaultMessage='Make sure that you have selected "Submit" for each problem before you submit your exam.'
       />
     </p>
     <p>
@@ -44,10 +45,9 @@ const SubmitExamInstructions = ({ submitExam, continueExam }) => (
   </Container>
 );
 
-SubmitExamInstructions.propTypes = {
-  submitExam: PropTypes.func.isRequired,
-  continueExam: PropTypes.func.isRequired,
-};
+SubmitExamInstructions = withExamStore(
+    SubmitExamInstructions, null, { submitExam, continueExam }
+);
 
 // eslint-disable-next-line import/prefer-default-export
 export { SubmitExamInstructions };

@@ -9,7 +9,7 @@ import {
   getExamAttemptsData,
   startExam,
   store,
-} from './data';
+} from '../data';
 import { SequenceExamWrapper } from './Sequence';
 
 jest.mock('./data', () => ({

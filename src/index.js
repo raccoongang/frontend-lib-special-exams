@@ -1,1 +1,1 @@
-export * from './SpecialExamWrapper';
+export * from './exam';

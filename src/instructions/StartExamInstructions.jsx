@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
+import { withExamStore } from "../hocs";
+import { startExam } from "../data";
 
-const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
+let StartExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
   <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
@@ -55,10 +57,14 @@ const ExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
   </div>
 ));
 
-ExamInstructions.propTypes = {
-  examDuration: PropTypes.number.isRequired,
-  startExam: PropTypes.func.isRequired,
+const mapExamStateToProps = (state) => {
+  const { examState } = state;
+  return { examDuration: examState.exam.time_limit_mins };
 };
 
+StartExamInstructions = withExamStore(
+    StartExamInstructions, mapExamStateToProps, { startExam }
+);
+
 // eslint-disable-next-line import/prefer-default-export
-export { ExamInstructions };
+export { StartExamInstructions };

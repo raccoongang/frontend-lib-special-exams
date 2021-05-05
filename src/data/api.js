@@ -43,7 +43,7 @@ export async function submitAttempt(attemptId) {
 }
 
 export async function timeOutAttempt(attemptId) {
-  return updateAttemptStatus(attemptId, ExamAction.TIMED_OUT);
+  return updateAttemptStatus(attemptId, ExamAction.SUBMIT);
 }
 
 export async function endExamWithFailure(attemptId, error) {

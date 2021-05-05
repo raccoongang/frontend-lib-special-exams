@@ -10,14 +10,14 @@ import {
 import { isEmpty } from '../helpers';
 import { setIsLoading, setExamState, expireExamAttempt } from './slice';
 
-function updateAttemptAfter(courseId, sequenceId, promise=null, noLoading=false) {
+function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
     let data;
-    !noLoading && dispatch(setIsLoading({ isLoading: true }));
+    if (!noLoading) { dispatch(setIsLoading({ isLoading: true })); }
     if (promise) {
       data = await promise;
       if (!data || !data.exam_attempt_id) {
-        !noLoading && dispatch(setIsLoading({ isLoading: false }));
+        if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
         return;
       }
     }
@@ -25,9 +25,9 @@ function updateAttemptAfter(courseId, sequenceId, promise=null, noLoading=false)
     const attemptData = await fetchExamAttemptsData(courseId, sequenceId);
     dispatch(setExamState({
       exam: attemptData.exam,
-      activeAttempt: !isEmpty(attemptData.active_attempt) ? attemptData.active_attempt : null
+      activeAttempt: !isEmpty(attemptData.active_attempt) ? attemptData.active_attempt : null,
     }));
-    !noLoading && dispatch(setIsLoading({ isLoading: false }));
+    if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
   };
 }
 
@@ -43,7 +43,7 @@ export function startExam() {
       return;
     }
     await updateAttemptAfter(
-        exam.course_id, exam.content_id, createExamAttempt(exam.id)
+      exam.course_id, exam.content_id, createExamAttempt(exam.id),
     )(dispatch);
   };
 }
@@ -57,7 +57,7 @@ export function stopExam() {
       return;
     }
     await updateAttemptAfter(
-        exam.course_id, exam.content_id, stopAttempt(attemptId), true
+      exam.course_id, exam.content_id, stopAttempt(attemptId), true,
     )(dispatch);
   };
 }
@@ -71,7 +71,7 @@ export function continueExam() {
       return;
     }
     await updateAttemptAfter(
-        exam.course_id, exam.content_id, continueAttempt(attemptId), true
+      exam.course_id, exam.content_id, continueAttempt(attemptId), true,
     )(dispatch);
   };
 }
@@ -85,7 +85,7 @@ export function submitExam() {
       return;
     }
     await updateAttemptAfter(
-        exam.course_id, exam.content_id, submitAttempt(attemptId)
+      exam.course_id, exam.content_id, submitAttempt(attemptId),
     )(dispatch);
   };
 }
@@ -99,7 +99,7 @@ export function expireExam() {
       return;
     }
     await updateAttemptAfter(
-        exam.course_id, exam.content_id, timeOutAttempt(attemptId)
+      exam.course_id, exam.content_id, timeOutAttempt(attemptId),
     )(dispatch);
     dispatch(expireExamAttempt());
   };

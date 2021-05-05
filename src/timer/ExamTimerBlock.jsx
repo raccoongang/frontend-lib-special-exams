@@ -1,9 +1,9 @@
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Alert, useToggle } from '@edx/paragon';
-import { CountDownTimer } from "./CountDownTimer";
-import { stopExam, expireExam }  from "../data";
-import { withExamStore } from "../hocs";
+import { CountDownTimer } from './CountDownTimer';
+import { stopExam, expireExam }  from '../data';
+import { withExamStore } from '../hocs';
 
 let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);

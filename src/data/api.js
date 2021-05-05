@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { ExamAction } from "../constants";
+import { ExamAction } from '../constants';
 
 export async function fetchExamAttemptsData(courseId, sequenceId) {
   const url = new URL(
@@ -20,11 +20,9 @@ export async function createExamAttempt(examId) {
   return data;
 }
 
-export async function updateAttemptStatus(attemptId, action, detail=null) {
+export async function updateAttemptStatus(attemptId, action, detail = null) {
   const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`);
-  const payload = {
-    action: action,
-  };
+  const payload = { action };
   if (detail) {
     payload.detail = detail;
   }

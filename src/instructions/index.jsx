@@ -5,7 +5,7 @@ import { SubmitExamInstructions } from './SubmitExamInstructions';
 import { SubmittedExamInstructions } from './SubmittedExamInstructions';
 import { startExam, continueExam, submitExam } from "../data";
 import { withExamStore } from "../hocs";
-import {isEmpty} from "../helpers";
+import { isEmpty } from "../helpers";
 
 const Instructions = ({ attempt, examHasAttempt, children }) => {
     switch (true) {

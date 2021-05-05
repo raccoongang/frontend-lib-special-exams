@@ -1,5 +1,3 @@
-import {expireExam} from "./thunks";
-
 export {
   getExamAttemptsData,
   startExam,

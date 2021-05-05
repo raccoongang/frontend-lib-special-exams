@@ -1,0 +1,66 @@
+import '@testing-library/jest-dom';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
+import { render } from '@testing-library/react';
+import Instructions from './index';
+import { Provider } from "react-redux";
+import { store, getExamAttemptsData } from '../data';
+
+jest.mock('../data', () => ({
+  store: {},
+  getExamAttemptsData: jest.fn(),
+}));
+getExamAttemptsData.mockReturnValue(jest.fn());
+store.subscribe = jest.fn();
+store.dispatch = jest.fn();
+
+
+test('Start exam instructions can be successfully rendered', () => {
+  store.getState = () => ({
+    examState: {
+      isLoading: false,
+      activeAttempt: null,
+      exam: {
+        time_limit_mins: 30,
+        attempt: {},
+      },
+    },
+  });
+
+  const { getByTestId } = render(
+    <IntlProvider locale="en">
+      <Provider store={store}>
+        <Instructions><div>Sequence</div></Instructions>
+      </Provider>
+    </IntlProvider>,
+  );
+  expect(getByTestId('start-exam-button')).toHaveTextContent('I am ready to start this timed exam.');
+});
+
+test('Instructions are not shown when exam is started', () => {
+  store.getState = () => ({
+    examState: {
+      isLoading: false,
+      activeAttempt: {
+        attempt_status: 'started',
+      },
+      exam: {
+        time_limit_mins: 30,
+        attempt: {
+          attempt_status: 'started',
+        },
+      },
+    },
+  });
+
+  const { getByTestId } = render(
+    <IntlProvider locale="en">
+      <Provider store={store}>
+        <Instructions>
+          <div data-testid="sequence-content">Sequence</div>
+        </Instructions>
+      </Provider>
+    </IntlProvider>,
+  );
+  expect(getByTestId('sequence-content')).toHaveTextContent('Sequence');
+});

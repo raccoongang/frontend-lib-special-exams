@@ -5,7 +5,7 @@ import { Button, Container } from '@edx/paragon';
 import { withExamStore } from "../hocs";
 import { startExam } from "../data";
 
-let StartExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
+let StartExamInstructions = ({ examDuration, startExam }) => (
   <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
@@ -61,7 +61,7 @@ let StartExamInstructions = injectIntl(({ examDuration, startExam, intl }) => (
       </p>
     </div>
   </div>
-));
+);
 
 const mapExamStateToProps = (state) => {
   const { examState } = state;

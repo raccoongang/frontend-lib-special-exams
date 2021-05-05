@@ -5,7 +5,7 @@ import { CountDownTimer } from "./CountDownTimer";
 import { stopExam, expireExam }  from "../data";
 import { withExamStore } from "../hocs";
 
-let ExamTimerBlock = ({ activeAttempt, stopExam }) => {
+let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [timeIsLow, setTimeIsLow] = useToggle(false);
 
@@ -71,7 +71,9 @@ const mapExamStateToProps = (state) => {
   return { activeAttempt: examState.activeAttempt };
 };
 
-ExamTimerBlock = withExamStore(ExamTimerBlock, mapExamStateToProps, { stopExam, expireExam });
+ExamTimerBlock = withExamStore(
+    ExamTimerBlock, mapExamStateToProps, { stopExam, expireExam }
+);
 
 // eslint-disable-next-line import/prefer-default-export
 export { ExamTimerBlock };

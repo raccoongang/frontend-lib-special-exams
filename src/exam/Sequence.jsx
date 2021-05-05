@@ -29,8 +29,6 @@ ExamStoreWrapper = withExamStore(ExamStoreWrapper, null, { getExamAttemptsData }
  * SequenceExamWrapper is the component responsible for handling special exams.
  * It takes control over rendering exam instructions unless exam is started only if
  * current sequence item is timed exam. Otherwise, renders any children elements passed.
- * @param sequence - Current course sequence item
- * @param courseId - Course id string
  * @param children - Current course sequence item content (e.g. unit, navigation buttons etc.)
  * @param props - Current course sequence item
  * @returns {JSX.Element}

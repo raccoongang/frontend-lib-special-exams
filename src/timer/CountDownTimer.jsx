@@ -4,8 +4,7 @@ import { Icon, useToggle } from '@edx/paragon';
 import { Visibility, VisibilityOff } from '@edx/paragon/icons';
 
 const TICK = 1;
-const LIMIT = [0, 0, 0];
-const LOW_TIME = [0, 0, 59];
+const LOW_TIME = 60;
 
 const getTimeComponents = (timeLeft) => {
     return {
@@ -19,40 +18,35 @@ const CountDownTimer = ({timeLeft, onLimitReached, onLowTime}) => {
   const [timeState, setTimeState] = useState(getTimeComponents(timeLeft));
   const [isShowTimer, showTimer, hideTimer] = useToggle(true);
   const [isLowTime, setLowTime] = useToggle(false);
+  const [limitReached, setLimitReached] = useToggle(false);
 
   const getTimeString = () => {
     return Object.values(timeState).map(item => item < 10 ? '0' + item : item).join(':');
   };
 
-  const isTimeLow = () => {
-      const actualTimeArr = Object.values(timeState);
-      return LOW_TIME.filter((item, idx) => {
-          const actualItemValue = actualTimeArr[idx];
-          return actualItemValue <= item;
-      }).length === LOW_TIME.length;
-  };
-
   useEffect(() => {
     let secondsLeft = timeLeft;
-
-    if (secondsLeft <= 0) return;
-
     const interval = setInterval(() => {
       secondsLeft -= TICK;
+      if (secondsLeft <= LOW_TIME) {
+        setLowTime();
+      }
+      if (!limitReached && secondsLeft === 0) {
+        setLimitReached();
+        clearInterval(interval);
+      }
       setTimeState(getTimeComponents(secondsLeft));
     }, 1000);
     return () => { clearInterval(interval); };
   }, []);
 
   useEffect(() => {
-    if (Object.values(timeState) === LIMIT) onLimitReached();
-    const lowTime = isTimeLow();
-    if (isLowTime !== lowTime) setLowTime();
-  }, [...Object.values(timeState)]);
-
-  useEffect(() => {
     if (isLowTime) onLowTime();
   }, [isLowTime]);
+
+  useEffect(() => {
+    if (limitReached) onLimitReached();
+  }, [limitReached]);
 
   return <div className='d-flex justify-content-between'>
     {isShowTimer && getTimeString()}
@@ -67,12 +61,11 @@ const CountDownTimer = ({timeLeft, onLimitReached, onLowTime}) => {
 
 CountDownTimer.propTypes = {
   timeLeft: PropTypes.number.isRequired,
-  onLimitReached: PropTypes.func,
+  onLimitReached: PropTypes.func.isRequired,
   onLowTime: PropTypes.func,
 };
 
 CountDownTimer.defaultProps = {
-  onLimitReached: () => {},
   onLowTime: () => {},
 };
 

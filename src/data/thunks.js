@@ -5,7 +5,6 @@ import {
   stopAttempt,
   continueAttempt,
   submitAttempt,
-  timeOutAttempt,
 } from './api';
 import { isEmpty } from '../helpers';
 import { setIsLoading, setExamState, expireExamAttempt } from './slice';
@@ -99,7 +98,7 @@ export function expireExam() {
       return;
     }
     await updateAttemptAfter(
-      exam.course_id, exam.content_id, timeOutAttempt(attemptId),
+      exam.course_id, exam.content_id, submitAttempt(attemptId),
     )(dispatch);
     dispatch(expireExamAttempt());
   };

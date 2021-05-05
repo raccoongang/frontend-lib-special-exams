@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Spinner } from '@edx/paragon';
 import { ExamStatus } from "../constants";
 import { ExamTimerBlock } from "../timer";
@@ -39,7 +38,7 @@ let Exam = ({ isLoading, showTimer, isTimeLimited, children }) => {
 };
 
 const mapExamStateToProps = (state) => {
-  const { isLoading, exam, activeAttempt } = state.examState;
+  const { isLoading, activeAttempt } = state.examState;
   return {
     isLoading,
     activeAttempt,

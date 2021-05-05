@@ -25,7 +25,7 @@ const CountDownTimer = ({timeLeft, onLimitReached, onLowTime}) => {
   };
 
   useEffect(() => {
-    let secondsLeft = timeLeft;
+    let secondsLeft = Math.floor(timeLeft);
     const interval = setInterval(() => {
       secondsLeft -= TICK;
       if (secondsLeft <= LOW_TIME) {
@@ -34,6 +34,7 @@ const CountDownTimer = ({timeLeft, onLimitReached, onLowTime}) => {
       if (!limitReached && secondsLeft === 0) {
         setLimitReached();
         clearInterval(interval);
+        return;
       }
       setTimeState(getTimeComponents(secondsLeft));
     }, 1000);

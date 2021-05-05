@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withExamStore } from "../hocs";
-import { ExamStatus } from '../constants';
 import { Exam } from "./Exam";
 import { getExamAttemptsData } from '../data';
 

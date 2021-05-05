@@ -11,8 +11,9 @@ const mapExamStateToProps = (state) => {
   return {
     isLoading,
     activeAttempt,
-    showTimer: activeAttempt
-      && [ExamStatus.STARTED, ExamStatus.READY_TO_SUBMIT].includes(activeAttempt.attempt_status),
+    showTimer: !!(activeAttempt
+      && [ExamStatus.STARTED, ExamStatus.READY_TO_SUBMIT].includes(activeAttempt.attempt_status)
+    ),
   };
 };
 

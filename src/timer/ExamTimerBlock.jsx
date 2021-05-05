@@ -62,7 +62,6 @@ let ExamTimerBlock = ({ activeAttempt, stopExam }) => {
             onLowTime={setTimeIsLow}
             onLimitReached={expireExam}
           />
-
         </div>
       </div>
     </Alert>

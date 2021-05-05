@@ -6,14 +6,14 @@ import { withExamStore } from "../hocs";
 let SubmittedExamInstructions = ({ timeIsOver }) => (
   <Container className="border py-5 mb-4">
     <h3 className="h3">
-      {!timeIsOver
+      {timeIsOver
         ? <FormattedMessage
-            id="exam.submittedExamInstructions.title"
-            defaultMessage="You have submitted your timed exam."
-          />
-        : <FormattedMessage
             id="exam.submittedExamInstructions.overtimeTitle"
             defaultMessage="The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded."
+          />
+        : <FormattedMessage
+            id="exam.submittedExamInstructions.title"
+            defaultMessage="You have submitted your timed exam."
           />
       }
     </h3>
@@ -28,8 +28,8 @@ let SubmittedExamInstructions = ({ timeIsOver }) => (
 );
 
 const mapExamStateToProps = (state) => {
-  const { examState } = state;
-  return { timeIsOver: examState.timeIsOver };
+  const { timeIsOver } = state.examState;
+  return { timeIsOver };
 };
 
 SubmittedExamInstructions = withExamStore(SubmittedExamInstructions, mapExamStateToProps);

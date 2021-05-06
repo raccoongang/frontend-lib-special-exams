@@ -1,3 +1,3 @@
-import SequenceExamWrapper from "./exam/Sequence";
+import SequenceExamWrapper from './exam/Sequence';
 
 export default SequenceExamWrapper;

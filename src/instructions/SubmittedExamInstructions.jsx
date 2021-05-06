@@ -1,21 +1,25 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Container } from '@edx/paragon';
-import { withExamStore } from "../hocs";
+import { withExamStore } from '../hocs';
 
-let SubmittedExamInstructions = ({ timeIsOver }) => (
+const SubmittedExamInstructions = ({ timeIsOver }) => (
   <Container className="border py-5 mb-4">
     <h3 className="h3">
       {timeIsOver
-        ? <FormattedMessage
+        ? (
+          <FormattedMessage
             id="exam.submittedExamInstructions.overtimeTitle"
             defaultMessage="The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded."
           />
-        : <FormattedMessage
+        )
+        : (
+          <FormattedMessage
             id="exam.submittedExamInstructions.title"
             defaultMessage="You have submitted your timed exam."
           />
-      }
+        )}
     </h3>
     <p>
       <FormattedMessage
@@ -27,12 +31,13 @@ let SubmittedExamInstructions = ({ timeIsOver }) => (
   </Container>
 );
 
+SubmittedExamInstructions.propTypes = {
+  timeIsOver: PropTypes.bool.isRequired,
+};
+
 const mapExamStateToProps = (state) => {
   const { timeIsOver } = state.examState;
   return { timeIsOver };
 };
 
-SubmittedExamInstructions = withExamStore(SubmittedExamInstructions, mapExamStateToProps);
-
-// eslint-disable-next-line import/prefer-default-export
-export { SubmittedExamInstructions };
+export default withExamStore(SubmittedExamInstructions, mapExamStateToProps);

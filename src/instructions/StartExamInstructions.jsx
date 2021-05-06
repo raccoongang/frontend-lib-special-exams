@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
-import { withExamStore } from "../hocs";
-import { startExam } from "../data";
+import { withExamStore } from '../hocs';
+import { startExam } from '../data';
 
-let StartExamInstructions = ({ examDuration, startExam }) => (
+const StartExamInstructions = ({ examDuration, startExamAttempt }) => (
   <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
@@ -34,8 +34,9 @@ let StartExamInstructions = ({ examDuration, startExam }) => (
         />
       </p>
       <Button
+        data-testid="start-exam-button"
         variant="outline-primary"
-        onClick={startExam}
+        onClick={startExamAttempt}
       >
         <FormattedMessage
           id="exam.startExamInstructions.startExamButtonText"
@@ -68,9 +69,11 @@ const mapExamStateToProps = (state) => {
   return { examDuration: examState.exam.time_limit_mins };
 };
 
-StartExamInstructions = withExamStore(
-    StartExamInstructions, mapExamStateToProps, { startExam }
-);
+StartExamInstructions.propTypes = {
+  examDuration: PropTypes.number.isRequired,
+  startExamAttempt: PropTypes.func.isRequired,
+};
 
-// eslint-disable-next-line import/prefer-default-export
-export { StartExamInstructions };
+export default withExamStore(
+  StartExamInstructions, mapExamStateToProps, { startExamAttempt: startExam },
+);

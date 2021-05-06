@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
-import { withExamStore } from "../hocs";
-import { continueExam, submitExam } from "../data";
+import { withExamStore } from '../hocs';
+import { continueExam, submitExam } from '../data';
 
-let SubmitExamInstructions = ({ submitExam, continueExam }) => (
+const SubmitExamInstructions = ({ submitExamAttempt, continueExamAttempt }) => (
   <Container className="border py-5 mb-4">
     <h3 className="h3">
       <FormattedMessage
@@ -14,7 +15,7 @@ let SubmitExamInstructions = ({ submitExam, continueExam }) => (
     </h3>
     <p>
       <FormattedMessage
-        id='exam.submitExamInstructions.warningText'
+        id="exam.submitExamInstructions.warningText"
         defaultMessage='Make sure that you have selected "Submit" for each problem before you submit your exam.'
       />
     </p>
@@ -26,7 +27,7 @@ let SubmitExamInstructions = ({ submitExam, continueExam }) => (
     </p>
     <Button
       variant="primary"
-      onClick={submitExam}
+      onClick={submitExamAttempt}
     >
       <FormattedMessage
         id="exam.submitExamInstructions.submit"
@@ -35,7 +36,7 @@ let SubmitExamInstructions = ({ submitExam, continueExam }) => (
     </Button>{' '}
     <Button
       variant="outline-primary"
-      onClick={continueExam}
+      onClick={continueExamAttempt}
     >
       <FormattedMessage
         id="exam.submitExamInstructions.continue"
@@ -45,9 +46,14 @@ let SubmitExamInstructions = ({ submitExam, continueExam }) => (
   </Container>
 );
 
-SubmitExamInstructions = withExamStore(
-    SubmitExamInstructions, null, { submitExam, continueExam }
-);
+SubmitExamInstructions.propTypes = {
+  submitExamAttempt: PropTypes.func.isRequired,
+  continueExamAttempt: PropTypes.func.isRequired,
+};
 
-// eslint-disable-next-line import/prefer-default-export
-export { SubmitExamInstructions };
+export default withExamStore(
+  SubmitExamInstructions, null, {
+    submitExamAttempt: submitExam,
+    continueExamAttempt: continueExam,
+  },
+);

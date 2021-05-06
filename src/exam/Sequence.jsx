@@ -17,11 +17,11 @@ import { getExamAttemptsData } from '../data';
  */
 const SequenceExamWrapper = ({ children, ...props }) => {
   const {
-    sequence, courseId, getExamAttemptsData, ...examProps
+    sequence, courseId, loadExamData, ...examProps
   } = props;
 
   useEffect(() => {
-    getExamAttemptsData(courseId, sequence.id);
+    loadExamData(courseId, sequence.id);
   }, []);
 
   return (
@@ -36,9 +36,9 @@ SequenceExamWrapper.propTypes = {
     id: PropTypes.string.isRequired,
     isTimeLimited: PropTypes.bool,
   }).isRequired,
-  getExamAttemptsData: PropTypes.func.isRequired,
+  loadExamData: PropTypes.func.isRequired,
   courseId: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(SequenceExamWrapper, null, { getExamAttemptsData });
+export default withExamStore(SequenceExamWrapper, null, { loadExamData: getExamAttemptsData });

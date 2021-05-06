@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Alert, useToggle } from '@edx/paragon';
-import { CountDownTimer } from './CountDownTimer';
-import { stopExam, expireExam }  from '../data';
+import CountDownTimer from './CountDownTimer';
+import { stopExam, expireExam } from '../data';
 import { withExamStore } from '../hocs';
 
-let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
+const ExamTimerBlock = ({ activeAttempt, stopExamAttempt, expireExamAttempt }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [timeIsLow, setTimeIsLow] = useToggle(false);
 
@@ -20,7 +21,7 @@ let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
           <Alert.Link href={activeAttempt.exam_url_path}>{activeAttempt.exam_display_name}</Alert.Link>
           <FormattedMessage
             id="exam.examTimer.text"
-            defaultMessage=' &#34;as a timed exam. '
+            defaultMessage='&#34; as a timed exam. '
           />
           {
             isShowMore
@@ -51,16 +52,16 @@ let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
           }
         </div>
         <div className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0">
-          <Button className="mr-3" variant="outline-primary" onClick={stopExam}>
+          <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
             <FormattedMessage
               id="exam.examTimer.endExamBtn"
               defaultMessage="End My Exam"
             />
           </Button>
           <CountDownTimer
-            timeLeft={activeAttempt['time_remaining_seconds']}
+            timeLeft={activeAttempt.time_remaining_seconds}
             onLowTime={setTimeIsLow}
-            onLimitReached={expireExam}
+            onLimitReached={expireExamAttempt}
           />
         </div>
       </div>
@@ -68,14 +69,24 @@ let ExamTimerBlock = ({ activeAttempt, stopExam, expireExam }) => {
   );
 };
 
+ExamTimerBlock.propTypes = {
+  activeAttempt: PropTypes.shape({
+    exam_url_path: PropTypes.string.isRequired,
+    exam_display_name: PropTypes.string.isRequired,
+    time_remaining_seconds: PropTypes.number.isRequired,
+  }).isRequired,
+  stopExamAttempt: PropTypes.func.isRequired,
+  expireExamAttempt: PropTypes.func.isRequired,
+};
+
 const mapExamStateToProps = (state) => {
   const { examState } = state;
   return { activeAttempt: examState.activeAttempt };
 };
 
-ExamTimerBlock = withExamStore(
-    ExamTimerBlock, mapExamStateToProps, { stopExam, expireExam }
+export default withExamStore(
+  ExamTimerBlock, mapExamStateToProps, {
+    stopExamAttempt: stopExam,
+    expireExamAttempt: expireExam,
+  },
 );
-
-// eslint-disable-next-line import/prefer-default-export
-export { ExamTimerBlock };

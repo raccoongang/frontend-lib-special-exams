@@ -1,2 +1,2 @@
-export * from './ExamTimerBlock';
-export * from './CountDownTimer';
+export { default as ExamTimerBlock } from './ExamTimerBlock';
+export { default as CountDownTimer } from './CountDownTimer';

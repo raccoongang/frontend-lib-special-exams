@@ -2,18 +2,19 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import Instructions from './index';
-import { Provider } from "react-redux";
-import { store, getExamAttemptsData } from '../data';
+import { store, getExamAttemptsData, startExam } from '../data';
 
 jest.mock('../data', () => ({
   store: {},
   getExamAttemptsData: jest.fn(),
+  startExam: jest.fn(),
 }));
 getExamAttemptsData.mockReturnValue(jest.fn());
+startExam.mockReturnValue(jest.fn());
 store.subscribe = jest.fn();
 store.dispatch = jest.fn();
-
 
 test('Start exam instructions can be successfully rendered', () => {
   store.getState = () => ({

@@ -56,7 +56,7 @@ const CountDownTimer = (props) => {
   }, [limitReached]);
 
   return (
-    <div className="d-flex justify-content-between">
+    <div className="d-flex justify-content-between" style={{ minWidth: '110px' }}>
       {isShowTimer && getTimeString()}
       <span className="pl-2 d-flex flex-column justify-content-center">
         {isShowTimer

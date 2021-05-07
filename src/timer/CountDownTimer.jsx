@@ -4,7 +4,6 @@ import { Icon, useToggle } from '@edx/paragon';
 import { Visibility, VisibilityOff } from '@edx/paragon/icons';
 
 const TICK = 1;
-const LOW_TIME = 60;
 
 const getTimeComponents = (timeLeft) => ({
   hours: Math.floor((timeLeft / (60 * 60)) % 24),
@@ -12,10 +11,15 @@ const getTimeComponents = (timeLeft) => ({
   seconds: Math.floor(timeLeft % 60),
 });
 
-const CountDownTimer = ({ timeLeft, onLimitReached, onLowTime }) => {
+const CountDownTimer = (props) => {
+  const {
+    timeLeft, lowTime, criticalLowTime,
+    onLimitReached, onLowTime, onCriticalLowTime,
+  } = props;
   const [timeState, setTimeState] = useState(getTimeComponents(timeLeft));
   const [isShowTimer, showTimer, hideTimer] = useToggle(true);
   const [isLowTime, setLowTime] = useToggle(false);
+  const [isCriticalTime, setCriticalTime] = useToggle(false);
   const [limitReached, setLimitReached] = useToggle(false);
 
   const getTimeString = () => Object.values(timeState).map(item => (item < 10 ? `0${item}` : item)).join(':');
@@ -24,7 +28,9 @@ const CountDownTimer = ({ timeLeft, onLimitReached, onLowTime }) => {
     let secondsLeft = Math.floor(timeLeft);
     const interval = setInterval(() => {
       secondsLeft -= TICK;
-      if (secondsLeft <= LOW_TIME) {
+      if (secondsLeft <= criticalLowTime) {
+        setCriticalTime();
+      } else if (secondsLeft <= lowTime) {
         setLowTime();
       }
       if (!limitReached && secondsLeft === 0) {
@@ -36,6 +42,10 @@ const CountDownTimer = ({ timeLeft, onLimitReached, onLowTime }) => {
     }, 1000);
     return () => { clearInterval(interval); };
   }, []);
+
+  useEffect(() => {
+    if (isCriticalTime) { onCriticalLowTime(); }
+  }, [isCriticalTime]);
 
   useEffect(() => {
     if (isLowTime) { onLowTime(); }
@@ -60,11 +70,15 @@ const CountDownTimer = ({ timeLeft, onLimitReached, onLowTime }) => {
 CountDownTimer.propTypes = {
   timeLeft: PropTypes.number.isRequired,
   onLimitReached: PropTypes.func.isRequired,
+  lowTime: PropTypes.number.isRequired,
+  criticalLowTime: PropTypes.number.isRequired,
   onLowTime: PropTypes.func,
+  onCriticalLowTime: PropTypes.func,
 };
 
 CountDownTimer.defaultProps = {
   onLowTime: () => {},
+  onCriticalLowTime: () => {},
 };
 
 export default CountDownTimer;

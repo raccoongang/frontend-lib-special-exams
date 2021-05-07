@@ -9,9 +9,19 @@ import { withExamStore } from '../hocs';
 const ExamTimerBlock = ({ activeAttempt, stopExamAttempt, expireExamAttempt }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [timeIsLow, setTimeIsLow] = useToggle(false);
+  const [criticalTimeIsLow, setCriticalTimeIsLow] = useToggle(false);
+
+  let alertVariant;
+  if (criticalTimeIsLow) {
+    alertVariant = 'danger';
+  } else if (timeIsLow) {
+    alertVariant = 'warning';
+  } else {
+    alertVariant = 'info';
+  }
 
   return (
-    <Alert variant={timeIsLow ? 'warning' : 'info'}>
+    <Alert variant={alertVariant}>
       <div className="d-flex justify-content-between flex-column flex-lg-row align-items-start">
         <div>
           <FormattedMessage
@@ -60,7 +70,10 @@ const ExamTimerBlock = ({ activeAttempt, stopExamAttempt, expireExamAttempt }) =
           </Button>
           <CountDownTimer
             timeLeft={activeAttempt.time_remaining_seconds}
+            lowTime={activeAttempt.low_threshold_sec}
+            criticalLowTime={activeAttempt.critically_low_threshold_sec}
             onLowTime={setTimeIsLow}
+            onCriticalLowTime={setCriticalTimeIsLow}
             onLimitReached={expireExamAttempt}
           />
         </div>
@@ -74,6 +87,8 @@ ExamTimerBlock.propTypes = {
     exam_url_path: PropTypes.string.isRequired,
     exam_display_name: PropTypes.string.isRequired,
     time_remaining_seconds: PropTypes.number.isRequired,
+    low_threshold_sec: PropTypes.number.isRequired,
+    critically_low_threshold_sec: PropTypes.number.isRequired,
   }).isRequired,
   stopExamAttempt: PropTypes.func.isRequired,
   expireExamAttempt: PropTypes.func.isRequired,

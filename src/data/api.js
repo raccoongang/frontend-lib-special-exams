@@ -4,7 +4,7 @@ import { ExamAction } from '../constants';
 
 export async function fetchExamAttemptsData(courseId, sequenceId) {
   const url = new URL(
-    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/exam_attempts/course_id/${courseId}/content_id/${sequenceId}`,
+    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt/course_id/${courseId}/content_id/${sequenceId}?is_learning_mfe=true`,
   );
   const { data } = await getAuthenticatedHttpClient().get(url.href);
   return data;

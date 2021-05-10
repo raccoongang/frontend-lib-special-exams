@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withExamStore } from '../hocs';
 import Exam from './Exam';
-import { getExamAttemptsData } from '../data';
+import { getExamAttemptsData, getProctoringSettings } from '../data';
 
 /**
  * SequenceExamWrapper is the component responsible for handling special exams.
@@ -17,11 +17,12 @@ import { getExamAttemptsData } from '../data';
  */
 const SequenceExamWrapper = ({ children, ...props }) => {
   const {
-    sequence, courseId, getExamAttemptsData, ...examProps
+    sequence, courseId, getExamAttemptsData, getProctoringSettings, ...examProps
   } = props;
 
   useEffect(() => {
     getExamAttemptsData(courseId, sequence.id);
+    getProctoringSettings();
   }, []);
 
   return (
@@ -37,8 +38,9 @@ SequenceExamWrapper.propTypes = {
     isTimeLimited: PropTypes.bool,
   }).isRequired,
   getExamAttemptsData: PropTypes.func.isRequired,
+  getProctoringSettings: PropTypes.func.isRequired,
   courseId: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(SequenceExamWrapper, null, { getExamAttemptsData });
+export default withExamStore(SequenceExamWrapper, null, { getExamAttemptsData, getProctoringSettings });

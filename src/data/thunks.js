@@ -5,9 +5,12 @@ import {
   stopAttempt,
   continueAttempt,
   submitAttempt,
+  fetchProctoringSettings,
 } from './api';
 import { isEmpty } from '../helpers';
-import { setIsLoading, setExamState, expireExamAttempt } from './slice';
+import {
+  setIsLoading, setExamState, expireExamAttempt, setProctoringSettings,
+} from './slice';
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
@@ -32,6 +35,15 @@ function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = fa
 
 export function getExamAttemptsData(courseId, sequenceId) {
   return updateAttemptAfter(courseId, sequenceId);
+}
+
+export function getProctoringSettings() {
+  return async (dispatch) => {
+    dispatch(setIsLoading({ isLoading: true }));
+    const proctoringSettings = await fetchProctoringSettings();
+    dispatch(setProctoringSettings({ proctoringSettings }));
+    dispatch(setIsLoading({ isLoading: false }));
+  };
 }
 
 export function startExam() {

@@ -7,13 +7,14 @@ import { withExamStore } from '../hocs';
 import Instructions from '../instructions';
 
 const mapExamStateToProps = (state) => {
-  const { isLoading, activeAttempt } = state.examState;
+  const { isLoading, exam, activeAttempt } = state.examState;
   return {
     isLoading,
     activeAttempt,
     showTimer: !!(activeAttempt
       && [ExamStatus.STARTED, ExamStatus.READY_TO_SUBMIT].includes(activeAttempt.attempt_status)
     ),
+    isProctoredExam: exam.is_proctored,
   };
 };
 

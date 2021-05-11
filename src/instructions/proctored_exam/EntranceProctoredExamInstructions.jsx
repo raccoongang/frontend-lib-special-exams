@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
 import { withExamStore } from '../../hocs';
-import { startExam } from '../../data';
+import { startProctoringExam } from '../../data';
 
 const EntranceProctoredExamInstructions = ({ startExamAttempt }) => (
   <div>
@@ -80,5 +80,5 @@ EntranceProctoredExamInstructions.propTypes = {
 };
 
 export default withExamStore(
-  EntranceProctoredExamInstructions, mapExamStateToProps, { startExamAttempt: startExam },
+  EntranceProctoredExamInstructions, mapExamStateToProps, { startExamAttempt: startProctoringExam },
 );

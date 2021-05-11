@@ -10,11 +10,12 @@ export async function fetchExamAttemptsData(courseId, sequenceId) {
   return data;
 }
 
-export async function createExamAttempt(examId) {
+export async function createExamAttempt(examId, startClock = true, attemptProctored = false) {
   const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/attempt`);
   const payload = {
     exam_id: examId,
-    start_clock: 'true',
+    start_clock: startClock,
+    attempt_proctored: attemptProctored,
   };
   const { data } = await getAuthenticatedHttpClient().post(url.href, payload);
   return data;

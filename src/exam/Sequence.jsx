@@ -21,8 +21,10 @@ const SequenceExamWrapper = ({ children, ...props }) => {
   } = props;
 
   useEffect(() => {
-    loadExamData(courseId, sequence.id);
-    loadProctoringSetting();
+    (async () => {
+      await loadProctoringSetting();
+      loadExamData(courseId, sequence.id);
+    })();
   }, []);
 
   return (

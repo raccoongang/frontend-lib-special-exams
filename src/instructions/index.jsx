@@ -4,6 +4,7 @@ import StartExamInstructions from './StartExamInstructions';
 import SubmitExamInstructions from './SubmitExamInstructions';
 import SubmittedExamInstructions from './SubmittedExamInstructions';
 import EntranceProctoredExamInstructions from './proctored_exam/EntranceProctoredExamInstructions';
+import VerificationProctoredExamInstructions from './proctored_exam/VerificationProctoredExamInstructions';
 import { startExam, continueExam, submitExam } from '../data';
 import { withExamStore } from '../hocs';
 import { isEmpty } from '../helpers';
@@ -15,6 +16,8 @@ const Instructions = ({
     switch (true) {
       case !examHasAttempt:
         return <EntranceProctoredExamInstructions />;
+      case attempt.attempt_status === ExamStatus.CREATED:
+        return <VerificationProctoredExamInstructions />;
       default:
         return children;
     }

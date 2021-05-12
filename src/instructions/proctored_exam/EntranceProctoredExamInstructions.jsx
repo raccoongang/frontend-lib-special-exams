@@ -70,15 +70,10 @@ const EntranceProctoredExamInstructions = ({ startExamAttempt }) => (
   </div>
 );
 
-const mapExamStateToProps = (state) => {
-  const { examState } = state;
-  return { examDuration: examState.exam.time_limit_mins };
-};
-
 EntranceProctoredExamInstructions.propTypes = {
   startExamAttempt: PropTypes.func.isRequired,
 };
 
 export default withExamStore(
-  EntranceProctoredExamInstructions, mapExamStateToProps, { startExamAttempt: startProctoringExam },
+  EntranceProctoredExamInstructions, null, { startExamAttempt: startProctoringExam },
 );

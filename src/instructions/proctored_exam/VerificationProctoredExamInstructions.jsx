@@ -1,7 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
-import { withExamStore } from '../../hocs';
 
 const VerificationProctoredExamInstructions = () => (
   <div>
@@ -54,6 +53,4 @@ const VerificationProctoredExamInstructions = () => (
   </div>
 );
 
-export default withExamStore(
-  VerificationProctoredExamInstructions, null, null,
-);
+export default VerificationProctoredExamInstructions;

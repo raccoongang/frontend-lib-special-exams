@@ -12,26 +12,19 @@ import { isEmpty } from '../helpers';
 const Instructions = ({
   attempt, examHasAttempt, isProctored, children,
 }) => {
-  if (isProctored) {
-    switch (true) {
-      case !examHasAttempt:
-        return <EntranceProctoredExamInstructions />;
-      case attempt.attempt_status === ExamStatus.CREATED:
-        return <VerificationProctoredExamInstructions />;
-      default:
-        return children;
-    }
-  } else {
-    switch (true) {
-      case !examHasAttempt:
-        return <StartExamInstructions />;
-      case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
-        return <SubmitExamInstructions />;
-      case attempt.attempt_status === ExamStatus.SUBMITTED:
-        return <SubmittedExamInstructions />;
-      default:
-        return children;
-    }
+  switch (true) {
+    case !examHasAttempt:
+      return isProctored
+        ? <EntranceProctoredExamInstructions />
+        : <StartExamInstructions />;
+    case attempt.attempt_status === ExamStatus.CREATED:
+      return <VerificationProctoredExamInstructions />;
+    case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
+      return <SubmitExamInstructions />;
+    case attempt.attempt_status === ExamStatus.SUBMITTED:
+      return <SubmittedExamInstructions />;
+    default:
+      return children;
   }
 };
 

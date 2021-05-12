@@ -17,14 +17,16 @@ import { getExamAttemptsData, getProctoringSettings } from '../data';
  */
 const SequenceExamWrapper = ({ children, ...props }) => {
   const {
-    sequence, courseId, loadExamData, loadProctoringSetting, ...examProps
+    sequence, courseId, loadExamData, loadProctoringSettings, ...examProps
   } = props;
 
+  const loadInitialData = async () => {
+    await loadProctoringSettings();
+    loadExamData(courseId, sequence.id);
+  };
+
   useEffect(() => {
-    (async () => {
-      await loadProctoringSetting();
-      loadExamData(courseId, sequence.id);
-    })();
+    loadInitialData();
   }, []);
 
   return (
@@ -40,12 +42,12 @@ SequenceExamWrapper.propTypes = {
     isTimeLimited: PropTypes.bool,
   }).isRequired,
   loadExamData: PropTypes.func.isRequired,
-  loadProctoringSetting: PropTypes.func.isRequired,
+  loadProctoringSettings: PropTypes.func.isRequired,
   courseId: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
 };
 
 export default withExamStore(SequenceExamWrapper, null, {
   loadExamData: getExamAttemptsData,
-  loadProctoringSetting: getProctoringSettings,
+  loadProctoringSettings: getProctoringSettings,
 });

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Alert, useToggle } from '@edx/paragon';
 import CountDownTimer from './CountDownTimer';
-import { ExamStatus } from '../constants';
+import { ExamStatus, IS_STARTED_STATUS } from '../constants';
 import TimerProvider from './TimerProvider';
 import { Emitter } from '../data';
 import {
@@ -21,7 +21,7 @@ const ExamTimerBlock = injectIntl(({
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [alertVariant, setAlertVariant] = useState('info');
 
-  if (!attempt) {
+  if (!attempt || !IS_STARTED_STATUS(attempt.attempt_status)) {
     return null;
   }
 

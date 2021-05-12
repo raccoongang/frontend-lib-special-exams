@@ -3,7 +3,7 @@ import ExamWrapper from './exam/ExamWrapper';
 import { withExamStore } from './hocs';
 import * as dispatchActions from './data/thunks';
 import ExamStateContext from './context';
-import { ExamStatus } from './constants';
+import { IS_STARTED_STATUS } from './constants';
 
 /**
  * Make exam state available as a context for all library components.
@@ -15,9 +15,7 @@ import { ExamStatus } from './constants';
 const StateProvider = ({ children, ...state }) => (
   <ExamStateContext.Provider value={{
     ...state,
-    showTimer: !!(state.activeAttempt
-      && [ExamStatus.STARTED, ExamStatus.READY_TO_SUBMIT].includes(state.activeAttempt.attempt_status)
-    ),
+    showTimer: !!(state.activeAttempt && IS_STARTED_STATUS(state.activeAttempt.attempt_status)),
   }}
   >
     {children}

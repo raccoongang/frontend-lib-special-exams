@@ -14,13 +14,14 @@ import {
   expireExamAttempt,
   setActiveAttempt,
 } from './slice';
+import { ExamStatus } from '../constants';
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
     let data;
     if (!noLoading) { dispatch(setIsLoading({ isLoading: true })); }
     if (promise) {
-      data = await promise;
+      data = await promise.catch(err => err);
       if (!data || !data.exam_attempt_id) {
         if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
         return;
@@ -72,6 +73,9 @@ export function pollAttempt(url) {
     dispatch(setActiveAttempt({
       activeAttempt: updatedAttempt,
     }));
+    if (data.status === ExamStatus.SUBMITTED) {
+      dispatch(expireExamAttempt());
+    }
   };
 }
 

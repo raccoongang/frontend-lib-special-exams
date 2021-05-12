@@ -19,6 +19,10 @@ export const examSlice = createSlice({
     },
     setActiveAttempt: (state, { payload }) => {
       state.activeAttempt = payload.activeAttempt;
+      const examAttempt = state.exam.attempt;
+      if (examAttempt && examAttempt.attempt_id === payload.activeAttempt.attempt_id) {
+        state.exam.attempt = payload.activeAttempt;
+      }
     },
     expireExamAttempt: (state) => {
       state.timeIsOver = true;

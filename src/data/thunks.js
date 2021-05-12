@@ -53,19 +53,24 @@ export function startExam() {
   };
 }
 
+/**
+ * Poll exam active attempt status.
+ * @param url - poll attempt url
+ */
 export function pollAttempt(url) {
   return async (dispatch, getState) => {
     const currentAttempt = getState().examState.activeAttempt;
-    const attempt = await pollExamAttempt(url);
-    const updatedAttempt = Object.assign(
-      {}, currentAttempt, {
-        time_remaining_seconds: attempt.time_remaining_seconds,
-        accessibility_time_string: attempt.accessibility_time_string,
-        attempt_status: attempt.status,
-      }
+    const data = await pollExamAttempt(url).catch(
+      err => logError(err),
     );
+    const updatedAttempt = {
+      ...currentAttempt,
+      time_remaining_seconds: data.time_remaining_seconds,
+      accessibility_time_string: data.accessibility_time_string,
+      attempt_status: data.status,
+    };
     dispatch(setActiveAttempt({
-      activeAttempt: updatedAttempt
+      activeAttempt: updatedAttempt,
     }));
   };
 }

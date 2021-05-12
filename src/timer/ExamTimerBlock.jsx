@@ -3,15 +3,14 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Alert, useToggle } from '@edx/paragon';
 import CountDownTimer from './CountDownTimer';
-import {ExamStatus} from "../constants";
-import TimerProvider from "./TimerProvider";
-import { Emitter } from "../data";
+import { ExamStatus } from '../constants';
+import TimerProvider from './TimerProvider';
+import { Emitter } from '../data';
 import {
   TIMER_IS_CRITICALLY_LOW,
   TIMER_IS_LOW,
-  TIMER_LIMIT_REACHED
-} from "./events";
-
+  TIMER_LIMIT_REACHED,
+} from './events';
 
 /**
  * Exam timer block component.
@@ -26,8 +25,8 @@ const ExamTimerBlock = injectIntl(({
     return null;
   }
 
-  const onLowTime= () => setAlertVariant('warning');
-  const onCriticalLowTime= () => setAlertVariant('danger');
+  const onLowTime = () => setAlertVariant('warning');
+  const onCriticalLowTime = () => setAlertVariant('danger');
 
   useEffect(() => {
     Emitter.once(TIMER_IS_LOW, onLowTime);
@@ -86,19 +85,23 @@ const ExamTimerBlock = injectIntl(({
                 )
             }
           </div>
-          <div className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0"
+          <div
+            className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0"
             aria-label={intl.formatMessage({
-              id: "exam.aria.examTimerAndEndExamButton",
-              defaultMessage: "Exam timer and end exam button"
-            })}>
+              id: 'exam.aria.examTimerAndEndExamButton',
+              defaultMessage: 'Exam timer and end exam button',
+            })}
+          >
 
             {attempt.attempt_status !== ExamStatus.READY_TO_SUBMIT
-              && <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
+              && (
+              <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
                 <FormattedMessage
                   id="exam.examTimer.endExamBtn"
                   defaultMessage="End My Exam"
                 />
-              </Button>}
+              </Button>
+              )}
             <span className="sr-only timer-announce" aria-live="assertive">{attempt.accessibility_time_string}</span>
 
             <CountDownTimer />

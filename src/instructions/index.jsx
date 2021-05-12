@@ -1,15 +1,18 @@
-import React from 'react';
-import { ExamStatus } from '../constants';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import StartExamInstructions from './StartExamInstructions';
 import SubmitExamInstructions from './SubmitExamInstructions';
 import SubmittedExamInstructions from './SubmittedExamInstructions';
-import { startExam, continueExam, submitExam } from '../data';
-import { withExamStore } from '../hocs';
 import { isEmpty } from '../helpers';
+import { ExamStatus } from '../constants';
+import ExamStateContext from '../context';
 
-const Instructions = ({ attempt, examHasAttempt, children }) => {
+const Instructions = ({ children }) => {
+  const state = useContext(ExamStateContext);
+  const { attempt } = state.exam;
+
   switch (true) {
-    case !examHasAttempt:
+    case isEmpty(attempt):
       return <StartExamInstructions />;
     case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
       return <SubmitExamInstructions />;
@@ -20,11 +23,8 @@ const Instructions = ({ attempt, examHasAttempt, children }) => {
   }
 };
 
-const mapExamStateToProps = (state) => {
-  const { attempt } = state.examState.exam;
-  return { attempt, examHasAttempt: !isEmpty(attempt) };
+Instructions.propTypes = {
+  children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(
-  Instructions, mapExamStateToProps, { startExam, continueExam, submitExam },
-);
+export default Instructions;

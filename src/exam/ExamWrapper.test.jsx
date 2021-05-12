@@ -3,9 +3,9 @@ import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import { AppContext } from '@edx/frontend-platform/react';
-import SequenceExamWrapper from './Sequence';
+import SequenceExamWrapper from './ExamWrapper';
 import { store, getExamAttemptsData, startExam } from '../data';
+import { ExamStateProvider } from '../index';
 
 jest.mock('../data', () => ({
   store: {},
@@ -34,32 +34,30 @@ const sequence = {
 const courseId = 'course-v1:test+test+test';
 
 test('SequenceExamWrapper is successfully rendered', () => {
-  const authenticatedUser = { userId: 1 };
   const { getByTestId } = render(
     <IntlProvider locale="en">
-      <AppContext.Provider value={{ authenticatedUser }}>
-        <Provider store={store}>
+      <Provider store={store}>
+        <ExamStateProvider>
           <SequenceExamWrapper sequence={sequence} courseId={courseId}>
             <div>children</div>
           </SequenceExamWrapper>
-        </Provider>
-      </AppContext.Provider>
+        </ExamStateProvider>
+      </Provider>
     </IntlProvider>,
   );
   expect(getByTestId('exam-instructions-title')).toHaveTextContent('Subsection is a Timed Exam (30 minutes)');
 });
 
 test('SequenceExamWrapper does not take any actions if sequence item is not exam', () => {
-  const authenticatedUser = { userId: 1 };
   const { getByTestId } = render(
     <IntlProvider locale="en">
-      <AppContext.Provider value={{ authenticatedUser }}>
-        <Provider store={store}>
+      <Provider store={store}>
+        <ExamStateProvider>
           <SequenceExamWrapper sequence={{ ...sequence, isTimeLimited: false }} courseId={courseId}>
             <div data-testid="sequence-content">children</div>
           </SequenceExamWrapper>
-        </Provider>
-      </AppContext.Provider>
+        </ExamStateProvider>
+      </Provider>
     </IntlProvider>,
   );
   expect(getByTestId('sequence-content')).toHaveTextContent('children');

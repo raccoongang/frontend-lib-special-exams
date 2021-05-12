@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useToggle } from "@edx/paragon";
-import { Emitter } from "../data";
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useToggle } from '@edx/paragon';
+import { Emitter } from '../data';
 import {
   TIMER_IS_CRITICALLY_LOW,
   TIMER_IS_LOW,
-  TIMER_LIMIT_REACHED
-} from "./events";
-import { ExamStatus } from "../constants";
+  TIMER_LIMIT_REACHED,
+} from './events';
+import { ExamStatus } from '../constants';
+import { withExamStore } from '../hocs';
 
 /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
 const GRACE_PERIOD_SECS = 5;
 const POLL_INTERVAL = 60;
 
 export const TimerContext = React.createContext({});
+
+const mapStateToProps = (state) => {
+  const { activeAttempt } = state.examState;
+  return { attempt: activeAttempt };
+};
 
 const getFormattedRemainingTime = (timeLeft) => ({
   hours: Math.floor(timeLeft / (60 * 60)),
@@ -25,11 +32,11 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
   const [timer, setTimer] = useState();
   const [limitReached, setLimitReached] = useToggle(false);
   const {
-    time_remaining_seconds,
+    time_remaining_seconds: timeRemaining,
     critically_low_threshold_sec: criticalLowTime,
     low_threshold_sec: lowTime,
   } = attempt;
-  const startValue = Math.floor(time_remaining_seconds);
+  const startValue = Math.floor(timeRemaining);
   const LIMIT = GRACE_PERIOD_SECS ? 0 - GRACE_PERIOD_SECS : 0;
 
   const getTimeString = () => Object.values(timeState).map(
@@ -38,7 +45,7 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
       // User will see 00:00:00 during grace period if any.
       const value = item < 0 ? 0 : item;
       return (value < 10 ? `0${value}` : value);
-    }
+    },
   ).join(':');
 
   const pollExam = () => {
@@ -46,7 +53,7 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
       return;
     }
     const url = attempt.exam_started_poll_url;
-    const queryString = '?sourceid=in_exam&proctored=' + attempt.taking_as_proctored;
+    const queryString = `?sourceid=in_exam&proctored=${attempt.taking_as_proctored}`;
     pollHandler(url + queryString);
   };
 
@@ -64,7 +71,6 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
         setLimitReached();
         break;
       default:
-        return;
     }
   };
 
@@ -85,41 +91,32 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
     return () => { clearInterval(timer); };
   }, []);
 
-  return <TimerContext.Provider value={{
-    timeState,
-    getTimeString,
-  }}>
-    {children}
-  </TimerContext.Provider>;
+  return (
+    <TimerContext.Provider value={{
+      timeState,
+      getTimeString,
+    }}
+    >
+      {children}
+    </TimerContext.Provider>
+  );
 };
 
-export default TimerServiceProvider;
+TimerServiceProvider.propTypes = {
+  attempt: PropTypes.shape({
+    time_remaining_seconds: PropTypes.number.isRequired,
+    critically_low_threshold_sec: PropTypes.number.isRequired,
+    low_threshold_sec: PropTypes.number.isRequired,
+    exam_started_poll_url: PropTypes.string,
+    taking_as_proctored: PropTypes.bool,
+    attempt_status: PropTypes.string.isRequired,
+  }).isRequired,
+  children: PropTypes.element.isRequired,
+  pollHandler: PropTypes.func,
+};
 
-//
-// const timeoutPromise = (timeoutMilliseconds) => {
-//     const message = 'worker failed to respond after ' + timeoutMilliseconds + 'ms';
-//     return new Promise((resolve, reject) => {
-//         setTimeout(() => {
-//             reject(Error(message));
-//         }, timeoutMilliseconds);
-//     });
-//   };
-//
-//   const pollPromise = () => {
-//     return new Promise((resolve) => {
-//       pollExamAttempt(activeAttempt.exam_started_poll_url).then(() => {
-//         resolve();
-//       });
-//     });
-//   };
-//
-//   const ping = (timeoutInSeconds) => {
-//     return Promise.race([
-//         pollPromise(),
-//         timeoutPromise(timeoutInSeconds * 1000)
-//     ]);
-//   };
-//
-//   useEffect(() => {
-//     ping(10);
-//   }, []);
+TimerServiceProvider.defaultProps = {
+  pollHandler: () => {},
+};
+
+export default withExamStore(TimerServiceProvider, mapStateToProps);

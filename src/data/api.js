@@ -13,8 +13,7 @@ export async function fetchExamAttemptsData(courseId, sequenceId) {
 }
 
 export async function pollExamAttempt(url) {
-  const { data } = await getAuthenticatedHttpClient().get(
-    `${getConfig().LMS_BASE_URL}${url}`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}${url}`);
   return data;
 }
 

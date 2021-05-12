@@ -1,40 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@edx/paragon';
-import { ExamStatus } from '../constants';
 import { ExamTimerBlock } from '../timer';
-import { withExamStore } from '../hocs';
 import Instructions from '../instructions';
-import { expireExam, stopExam } from "../data";
-import { pollAttempt } from "../data/thunks";
-
-const mapExamStateToProps = (state) => {
-  const { isLoading, activeAttempt } = state.examState;
-  return {
-    isLoading,
-    activeAttempt,
-    showTimer: !!(activeAttempt
-      && [ExamStatus.STARTED, ExamStatus.READY_TO_SUBMIT].includes(activeAttempt.attempt_status)
-    ),
-  };
-};
+import ExamStateContext from '../context';
 
 /**
  * Exam component is intended to render exam instructions before and after exam.
  * It is also responsible for rendering exam timer block/component during the exam.
  * If children do not relate to exam sequence, render them directly.
- * @param isLoading - boolean indicating fetching exam attempt data is in progress
- * @param showTimer - boolean indicating if timer block  should be shown or not
  * @param isTimeLimited - boolean used to identify if we need to process sequence as an exam
  * @param children - sequence content
  * @returns {JSX.Element}
  * @constructor
  */
-const Exam = (props) => {
+const Exam = ({ isTimeLimited, children }) => {
+  const state = useContext(ExamStateContext);
   const {
-    isLoading, showTimer, isTimeLimited, children, activeAttempt, stopExamAttempt,
-    expireExamAttempt, pollExamAttempt,
-  } = props;
+    isLoading, activeAttempt, showTimer,
+    stopExam, expireExam, pollExam,
+  } = state;
 
   if (isLoading) {
     return (
@@ -49,9 +34,9 @@ const Exam = (props) => {
       {showTimer && (
         <ExamTimerBlock
           attempt={activeAttempt}
-          stopExamAttempt={stopExamAttempt}
-          expireExamAttempt={expireExamAttempt}
-          pollExamAttempt={pollExamAttempt}
+          stopExamAttempt={stopExam}
+          expireExamAttempt={expireExam}
+          pollExamAttempt={pollExam}
         />
       )}
       {isTimeLimited ? <Instructions>{children}</Instructions> : children}
@@ -60,13 +45,8 @@ const Exam = (props) => {
 };
 
 Exam.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  showTimer: PropTypes.bool.isRequired,
   isTimeLimited: PropTypes.bool.isRequired,
   children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(
-    Exam, mapExamStateToProps,
-    { stopExamAttempt: stopExam, expireExamAttempt: expireExam, pollExamAttempt: pollAttempt }
-);
+export default Exam;

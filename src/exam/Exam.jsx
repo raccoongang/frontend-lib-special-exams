@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@edx/paragon';
 import { ExamStatus } from '../constants';
 import { ExamTimerBlock } from '../timer';
 import { withExamStore } from '../hocs';
 import Instructions from '../instructions';
+import { expireExam, stopExam } from "../data";
+import { pollAttempt } from "../data/thunks";
 
 const mapExamStateToProps = (state) => {
   const { isLoading, activeAttempt } = state.examState;
@@ -30,8 +32,10 @@ const mapExamStateToProps = (state) => {
  */
 const Exam = (props) => {
   const {
-    isLoading, showTimer, isTimeLimited, children,
+    isLoading, showTimer, isTimeLimited, children, activeAttempt, stopExamAttempt,
+    expireExamAttempt, pollExamAttempt,
   } = props;
+
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center flex-column my-5 py-5">
@@ -42,7 +46,14 @@ const Exam = (props) => {
 
   return (
     <div className="d-flex flex-column justify-content-center">
-      {showTimer && <ExamTimerBlock />}
+      {showTimer && (
+        <ExamTimerBlock
+          attempt={activeAttempt}
+          stopExamAttempt={stopExamAttempt}
+          expireExamAttempt={expireExamAttempt}
+          pollExamAttempt={pollExamAttempt}
+        />
+      )}
       {isTimeLimited ? <Instructions>{children}</Instructions> : children}
     </div>
   );
@@ -55,4 +66,7 @@ Exam.propTypes = {
   children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(Exam, mapExamStateToProps);
+export default withExamStore(
+    Exam, mapExamStateToProps,
+    { stopExamAttempt: stopExam, expireExamAttempt: expireExam, pollExamAttempt: pollAttempt }
+);

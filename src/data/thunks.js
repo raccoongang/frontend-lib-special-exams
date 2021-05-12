@@ -5,9 +5,15 @@ import {
   stopAttempt,
   continueAttempt,
   submitAttempt,
+  pollExamAttempt,
 } from './api';
 import { isEmpty } from '../helpers';
-import { setIsLoading, setExamState, expireExamAttempt } from './slice';
+import {
+  setIsLoading,
+  setExamState,
+  expireExamAttempt,
+  setActiveAttempt,
+} from './slice';
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
@@ -44,6 +50,23 @@ export function startExam() {
     await updateAttemptAfter(
       exam.course_id, exam.content_id, createExamAttempt(exam.id),
     )(dispatch);
+  };
+}
+
+export function pollAttempt(url) {
+  return async (dispatch, getState) => {
+    const currentAttempt = getState().examState.activeAttempt;
+    const attempt = await pollExamAttempt(url);
+    const updatedAttempt = Object.assign(
+      {}, currentAttempt, {
+        time_remaining_seconds: attempt.time_remaining_seconds,
+        accessibility_time_string: attempt.accessibility_time_string,
+        attempt_status: attempt.status,
+      }
+    );
+    dispatch(setActiveAttempt({
+      activeAttempt: updatedAttempt
+    }));
   };
 }
 

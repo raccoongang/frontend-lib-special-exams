@@ -29,7 +29,7 @@ jobs:
     - name: Coverage
       uses: codecov/codecov-action@v1
 
-  publish-gpr:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +41,7 @@ jobs:
           scope: '@raccoongang'
       - run: npm install
       - run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"
-      - run: git push --tags && git push
+      - run: git push || true
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

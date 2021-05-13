@@ -36,10 +36,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 12`
           registry-url: https://npm.pkg.github.com/
           scope: '@raccoongang'
       - run: npm install
+      - run: npm run build
       - run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"
       - run: git push || true
       - run: npm publish

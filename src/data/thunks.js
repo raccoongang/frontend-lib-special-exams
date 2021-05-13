@@ -60,7 +60,7 @@ export function startExam() {
     const { exam } = getState().examState;
     if (!exam.id) {
       logError('Failed to start exam. No exam id.');
-      dispatch(setApiError({errorMsg: 'Failed to start exam. No exam id was provided.'}));
+      dispatch(setApiError({ errorMsg: 'Failed to start exam. No exam id was provided.' }));
       return;
     }
     await updateAttemptAfter(

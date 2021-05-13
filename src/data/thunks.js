@@ -13,26 +13,41 @@ import {
   setExamState,
   expireExamAttempt,
   setActiveAttempt,
+  setApiError,
 } from './slice';
+
+function handleAPIError(error, dispatch) {
+  const { message } = error;
+  dispatch(setApiError({ errorMsg: message }));
+}
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
-    let data;
     if (!noLoading) { dispatch(setIsLoading({ isLoading: true })); }
     if (promise) {
-      data = await promise;
-      if (!data || !data.exam_attempt_id) {
+      try {
+        const data = await promise;
+        if (!data || !data.exam_attempt_id) {
+          if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
+          return;
+        }
+      } catch (error) {
+        handleAPIError(error, dispatch);
         if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
-        return;
       }
     }
 
-    const attemptData = await fetchExamAttemptsData(courseId, sequenceId);
-    dispatch(setExamState({
-      exam: attemptData.exam,
-      activeAttempt: !isEmpty(attemptData.active_attempt) ? attemptData.active_attempt : null,
-    }));
-    if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
+    try {
+      const attemptData = await fetchExamAttemptsData(courseId, sequenceId);
+      dispatch(setExamState({
+        exam: attemptData.exam,
+        activeAttempt: !isEmpty(attemptData.active_attempt) ? attemptData.active_attempt : null,
+      }));
+    } catch (error) {
+      handleAPIError(error, dispatch);
+    } finally {
+      if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
+    }
   };
 }
 
@@ -45,6 +60,7 @@ export function startExam() {
     const { exam } = getState().examState;
     if (!exam.id) {
       logError('Failed to start exam. No exam id.');
+      dispatch(setApiError({errorMsg: 'Failed to start exam. No exam id was provided.'}));
       return;
     }
     await updateAttemptAfter(
@@ -61,7 +77,7 @@ export function pollAttempt(url) {
   return async (dispatch, getState) => {
     const currentAttempt = getState().examState.activeAttempt;
     const data = await pollExamAttempt(url).catch(
-      err => logError(err),
+      error => handleAPIError(error, dispatch),
     );
     const updatedAttempt = {
       ...currentAttempt,
@@ -81,6 +97,7 @@ export function stopExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to stop exam. No attempt id.');
+      dispatch(setApiError({ errorMsg: 'Failed to stop exam. No attempt id was provided.' }));
       return;
     }
     await updateAttemptAfter(
@@ -95,6 +112,7 @@ export function continueExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to continue exam. No attempt id.');
+      dispatch(setApiError({ errorMsg: 'Failed to continue exam. No attempt id was provided.' }));
       return;
     }
     await updateAttemptAfter(
@@ -109,6 +127,7 @@ export function submitExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to submit exam. No attempt id.');
+      dispatch(setApiError({ errorMsg: 'Failed to submit exam. No attempt id was provided.' }));
       return;
     }
     await updateAttemptAfter(
@@ -123,6 +142,7 @@ export function expireExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to expire exam. No attempt id.');
+      dispatch(setApiError({ errorMsg: 'Failed to expire exam. No attempt id was provided.' }));
       return;
     }
     await updateAttemptAfter(

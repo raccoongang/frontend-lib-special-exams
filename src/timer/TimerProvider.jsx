@@ -29,7 +29,6 @@ const getFormattedRemainingTime = (timeLeft) => ({
 
 const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
   const [timeState, setTimeState] = useState({});
-  const [timer, setTimer] = useState();
   const [limitReached, setLimitReached] = useToggle(false);
   const {
     time_remaining_seconds: timeRemaining,
@@ -57,20 +56,16 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
     pollHandler(url + queryString);
   };
 
-  const processTimeLeft = (secondsLeft) => {
-    switch (true) {
-      case secondsLeft <= criticalLowTime:
-        Emitter.emit(TIMER_IS_CRITICALLY_LOW);
-        break;
-      case secondsLeft <= lowTime:
-        Emitter.emit(TIMER_IS_LOW);
-        break;
-      case !limitReached && secondsLeft < LIMIT:
-        clearInterval(timer);
-        Emitter.emit(TIMER_LIMIT_REACHED);
-        setLimitReached();
-        break;
-      default:
+  const processTimeLeft = (timer, secondsLeft) => {
+    if (secondsLeft <= criticalLowTime) {
+      Emitter.emit(TIMER_IS_CRITICALLY_LOW);
+    } else if (secondsLeft <= lowTime) {
+      Emitter.emit(TIMER_IS_LOW);
+    }
+    if (!limitReached && secondsLeft < LIMIT) {
+      clearInterval(timer);
+      setLimitReached();
+      Emitter.emit(TIMER_LIMIT_REACHED);
     }
   };
 
@@ -78,17 +73,17 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
     let secondsLeft = startValue;
     let timerTick = 0;
     const interval = setInterval(() => {
-      setTimeState(getFormattedRemainingTime(secondsLeft));
       secondsLeft -= 1;
       timerTick += 1;
-      processTimeLeft(secondsLeft);
-      if (timerTick % POLL_INTERVAL === 0) {
+      setTimeState(getFormattedRemainingTime(secondsLeft));
+      processTimeLeft(interval, secondsLeft);
+      // no polling during grace period
+      if (timerTick % POLL_INTERVAL === 0 && secondsLeft >= 0) {
         pollExam();
       }
     }, 1000);
-    setTimer(interval);
 
-    return () => { clearInterval(timer); };
+    return () => { clearInterval(interval); };
   }, []);
 
   return (

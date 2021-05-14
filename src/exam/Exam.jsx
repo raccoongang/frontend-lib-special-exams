@@ -19,7 +19,7 @@ const Exam = ({ isTimeLimited, children }) => {
   const state = useContext(ExamStateContext);
   const {
     isLoading, activeAttempt, showTimer,
-    stopExam, expireExam, pollExam, apiErrorMsg,
+    stopExam, expireExam, pollAttempt, apiErrorMsg,
   } = state;
 
   if (isLoading) {
@@ -37,6 +37,8 @@ const Exam = ({ isTimeLimited, children }) => {
     return <ExamAPIError details={apiErrorMsg} />;
   }
 
+  const sequenceContent = <>{children}</>;
+
   return (
     <div className="d-flex flex-column justify-content-center">
       {showTimer && (
@@ -44,11 +46,13 @@ const Exam = ({ isTimeLimited, children }) => {
           attempt={activeAttempt}
           stopExamAttempt={stopExam}
           expireExamAttempt={expireExam}
-          pollExamAttempt={pollExam}
+          pollExamAttempt={pollAttempt}
         />
       )}
       {apiErrorMsg && <ExamAPIError details={apiErrorMsg} />}
-      {isTimeLimited ? <Instructions>{children}</Instructions> : children}
+      {isTimeLimited
+        ? <Instructions>{sequenceContent}</Instructions>
+        : sequenceContent}
     </div>
   );
 };

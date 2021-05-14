@@ -1,6 +1,6 @@
 {
-  "name": "@edx/frontend-lib-special-exams",
-  "version": "0.1.0",
+  "name": "@raccoongang/frontend-lib-special-exams",
+  "version": "0.1.2",
   "description": "Special exams lib",
   "main": "dist/index.js",
   "exports": {
@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edx/frontend-lib-special-exams.git"
+    "url": "git+https://github.com/raccoongang/frontend-lib-special-exams.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "access": "public"
   },
   "files": [
-    "/dist"
+    "dist/"
   ],
   "sideEffects": false,
   "scripts": {
@@ -31,9 +31,9 @@
     }
   },
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/edx/frontend-lib-special-exams",
+  "homepage": "https://github.com/raccoongang/frontend-lib-special-exams",
   "bugs": {
-    "url": "https://github.com/edx/frontend-lib-special-exams/issues"
+    "url": "https://github.com/raccoongang/frontend-lib-special-exams/issues"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "1.2.34",

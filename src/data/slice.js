@@ -17,10 +17,14 @@ export const examSlice = createSlice({
     setExamState: (state, { payload }) => {
       state.exam = payload.exam;
       state.activeAttempt = payload.activeAttempt;
+      state.apiErrorMsg = '';
     },
     setActiveAttempt: (state, { payload }) => {
       state.activeAttempt = payload.activeAttempt;
-      state.apiErrorMsg = '';
+      const examAttempt = state.exam.attempt;
+      if (examAttempt && examAttempt.attempt_id === payload.activeAttempt.attempt_id) {
+        state.exam.attempt = payload.activeAttempt;
+      }
     },
     expireExamAttempt: (state) => {
       state.timeIsOver = true;

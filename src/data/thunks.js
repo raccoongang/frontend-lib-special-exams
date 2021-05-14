@@ -15,6 +15,7 @@ import {
   setActiveAttempt,
   setApiError,
 } from './slice';
+import { ExamStatus } from '../constants';
 
 function handleAPIError(error, dispatch) {
   const { message } = error;
@@ -88,6 +89,9 @@ export function pollAttempt(url) {
     dispatch(setActiveAttempt({
       activeAttempt: updatedAttempt,
     }));
+    if (data.status === ExamStatus.SUBMITTED) {
+      dispatch(expireExamAttempt());
+    }
   };
 }
 

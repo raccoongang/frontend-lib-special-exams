@@ -5,6 +5,7 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import Instructions from './index';
 import { store, getExamAttemptsData, startExam } from '../data';
+import { ExamStateProvider } from '../index';
 
 jest.mock('../data', () => ({
   store: {},
@@ -31,7 +32,9 @@ test('Start exam instructions can be successfully rendered', () => {
   const { getByTestId } = render(
     <IntlProvider locale="en">
       <Provider store={store}>
-        <Instructions><div>Sequence</div></Instructions>
+        <ExamStateProvider>
+          <Instructions><div>Sequence</div></Instructions>
+        </ExamStateProvider>
       </Provider>
     </IntlProvider>,
   );
@@ -57,9 +60,11 @@ test('Instructions are not shown when exam is started', () => {
   const { getByTestId } = render(
     <IntlProvider locale="en">
       <Provider store={store}>
-        <Instructions>
-          <div data-testid="sequence-content">Sequence</div>
-        </Instructions>
+        <ExamStateProvider>
+          <Instructions>
+            <div data-testid="sequence-content">Sequence</div>
+          </Instructions>
+        </ExamStateProvider>
       </Provider>
     </IntlProvider>,
   );

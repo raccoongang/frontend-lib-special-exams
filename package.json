@@ -1,6 +1,6 @@
 {
   "name": "@edx/frontend-lib-special-exams",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Special exams lib",
   "main": "dist/index.js",
   "exports": {
@@ -10,8 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/edx/frontend-lib-special-exams.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
-    "/dist"
+    "dist/"
   ],
   "sideEffects": false,
   "scripts": {
@@ -29,9 +32,6 @@
   },
   "license": "AGPL-3.0",
   "homepage": "https://github.com/edx/frontend-lib-special-exams",
-  "publishConfig": {
-    "access": "public"
-  },
   "bugs": {
     "url": "https://github.com/edx/frontend-lib-special-exams/issues"
   },
@@ -41,14 +41,15 @@
     "@fortawesome/free-regular-svg-icons": "5.11.2",
     "@fortawesome/free-solid-svg-icons": "5.11.2",
     "@fortawesome/react-fontawesome": "0.1.14",
-    "babel-polyfill": "6.26.0"
+    "babel-polyfill": "6.26.0",
+    "eventemitter3": "^4.0.7"
   },
   "peerDependencies": {
     "@edx/frontend-platform": "1.8.4",
     "@edx/paragon": "13.17.0",
     "prop-types": "15.7.2",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "react-redux": "7.1.3",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",

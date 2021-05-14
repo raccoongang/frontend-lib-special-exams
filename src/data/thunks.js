@@ -5,19 +5,25 @@ import {
   stopAttempt,
   continueAttempt,
   submitAttempt,
+  pollExamAttempt,
   fetchProctoringSettings,
 } from './api';
 import { isEmpty } from '../helpers';
 import {
-  setIsLoading, setExamState, expireExamAttempt, setProctoringSettings,
+  setIsLoading,
+  setExamState,
+  expireExamAttempt,
+  setActiveAttempt,
+  setProctoringSettings
 } from './slice';
+import { ExamStatus } from '../constants';
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
   return async (dispatch) => {
     let data;
     if (!noLoading) { dispatch(setIsLoading({ isLoading: true })); }
     if (promise) {
-      data = await promise;
+      data = await promise.catch(err => err);
       if (!data || !data.exam_attempt_id) {
         if (!noLoading) { dispatch(setIsLoading({ isLoading: false })); }
         return;
@@ -69,6 +75,31 @@ export function startProctoringExam() {
     await updateAttemptAfter(
       exam.course_id, exam.content_id, createExamAttempt(exam.id, false, true),
     )(dispatch);
+  };
+}
+
+/**
+ * Poll exam active attempt status.
+ * @param url - poll attempt url
+ */
+export function pollAttempt(url) {
+  return async (dispatch, getState) => {
+    const currentAttempt = getState().examState.activeAttempt;
+    const data = await pollExamAttempt(url).catch(
+      err => logError(err),
+    );
+    const updatedAttempt = {
+      ...currentAttempt,
+      time_remaining_seconds: data.time_remaining_seconds,
+      accessibility_time_string: data.accessibility_time_string,
+      attempt_status: data.status,
+    };
+    dispatch(setActiveAttempt({
+      activeAttempt: updatedAttempt,
+    }));
+    if (data.status === ExamStatus.SUBMITTED) {
+      dispatch(expireExamAttempt());
+    }
   };
 }
 

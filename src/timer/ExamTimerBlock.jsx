@@ -1,107 +1,128 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { Button, Alert, useToggle } from '@edx/paragon';
 import CountDownTimer from './CountDownTimer';
-import { stopExam, expireExam } from '../data';
-import { withExamStore } from '../hocs';
+import { ExamStatus, IS_STARTED_STATUS } from '../constants';
+import TimerProvider from './TimerProvider';
+import { Emitter } from '../data';
+import {
+  TIMER_IS_CRITICALLY_LOW,
+  TIMER_IS_LOW,
+  TIMER_LIMIT_REACHED,
+} from './events';
 
-const ExamTimerBlock = ({ activeAttempt, stopExamAttempt, expireExamAttempt }) => {
+/**
+ * Exam timer block component.
+ */
+const ExamTimerBlock = injectIntl(({
+  attempt, stopExamAttempt, expireExamAttempt, pollExamAttempt, intl,
+}) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
-  const [timeIsLow, setTimeIsLow] = useToggle(false);
-  const [criticalTimeIsLow, setCriticalTimeIsLow] = useToggle(false);
+  const [alertVariant, setAlertVariant] = useState('info');
 
-  let alertVariant;
-  if (criticalTimeIsLow) {
-    alertVariant = 'danger';
-  } else if (timeIsLow) {
-    alertVariant = 'warning';
-  } else {
-    alertVariant = 'info';
+  if (!attempt || !IS_STARTED_STATUS(attempt.attempt_status)) {
+    return null;
   }
 
+  const onLowTime = () => setAlertVariant('warning');
+  const onCriticalLowTime = () => setAlertVariant('danger');
+
+  useEffect(() => {
+    Emitter.once(TIMER_IS_LOW, onLowTime);
+    Emitter.once(TIMER_IS_CRITICALLY_LOW, onCriticalLowTime);
+    Emitter.once(TIMER_LIMIT_REACHED, expireExamAttempt);
+
+    return () => {
+      Emitter.off(TIMER_IS_LOW, onLowTime);
+      Emitter.off(TIMER_IS_CRITICALLY_LOW, onCriticalLowTime);
+      Emitter.off(TIMER_LIMIT_REACHED, expireExamAttempt);
+    };
+  }, []);
+
   return (
-    <Alert variant={alertVariant}>
-      <div className="d-flex justify-content-between flex-column flex-lg-row align-items-start">
-        <div>
-          <FormattedMessage
-            id="exam.examTimer.text"
-            defaultMessage='You are taking &#34;'
-          />
-          <Alert.Link href={activeAttempt.exam_url_path}>{activeAttempt.exam_display_name}</Alert.Link>
-          <FormattedMessage
-            id="exam.examTimer.text"
-            defaultMessage='&#34; as a timed exam. '
-          />
-          {
-            isShowMore
-              ? (
-                <span>
-                  <FormattedMessage
-                    id="exam.examTimer.showLess"
-                    defaultMessage={'The timer on the right shows the time remaining in the exam. '
-                      + 'To receive credit for problems, you must select "Submit" '
-                      + 'for each problem before you select "End My Exam" '}
-                  />
-                  <Alert.Link onClick={showLess}>
+    <TimerProvider attempt={attempt} pollHandler={pollExamAttempt}>
+      <Alert variant={alertVariant}>
+        <div className="d-flex justify-content-between flex-column flex-lg-row align-items-start">
+          <div>
+            <FormattedMessage
+              id="exam.examTimer.text"
+              defaultMessage='You are taking "'
+            />
+            <Alert.Link href={attempt.exam_url_path}>
+              {attempt.exam_display_name}
+            </Alert.Link>
+            <FormattedMessage
+              id="exam.examTimer.text"
+              defaultMessage='" as {exam_type}. '
+              values={{ exam_type: attempt.exam_type }}
+            />
+            {
+              isShowMore
+                ? (
+                  <span>
                     <FormattedMessage
-                      id="exam.examTimer.showLessLink"
-                      defaultMessage="Show Less"
+                      id="exam.examTimer.showLess"
+                      defaultMessage={'The timer on the right shows the time remaining in the exam. '
+                        + 'To receive credit for problems, you must select "Submit" '
+                        + 'for each problem before you select "End My Exam" '}
+                    />
+                    <Alert.Link onClick={showLess}>
+                      <FormattedMessage
+                        id="exam.examTimer.showLessLink"
+                        defaultMessage="Show Less"
+                      />
+                    </Alert.Link>
+                  </span>
+                )
+                : (
+                  <Alert.Link onClick={showMore}>
+                    <FormattedMessage
+                      id="exam.examTimer.showMoreLink"
+                      defaultMessage="Show more"
                     />
                   </Alert.Link>
-                </span>
-              )
-              : (
-                <Alert.Link onClick={showMore}>
-                  <FormattedMessage
-                    id="exam.examTimer.showMoreLink"
-                    defaultMessage="Show more"
-                  />
-                </Alert.Link>
-              )
-          }
+                )
+            }
+          </div>
+          <div
+            className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0"
+            aria-label={intl.formatMessage({
+              id: 'exam.aria.examTimerAndEndExamButton',
+              defaultMessage: 'Exam timer and end exam button',
+            })}
+          >
+
+            {attempt.attempt_status !== ExamStatus.READY_TO_SUBMIT
+              && (
+              <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
+                <FormattedMessage
+                  id="exam.examTimer.endExamBtn"
+                  defaultMessage="End My Exam"
+                />
+              </Button>
+              )}
+            <span className="sr-only timer-announce" aria-live="assertive">{attempt.accessibility_time_string}</span>
+
+            <CountDownTimer />
+
+          </div>
         </div>
-        <div className="d-flex align-items-center flex-shrink-0 ml-lg-3 mt-2 mt-lg-0">
-          <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
-            <FormattedMessage
-              id="exam.examTimer.endExamBtn"
-              defaultMessage="End My Exam"
-            />
-          </Button>
-          <CountDownTimer
-            timeLeft={activeAttempt.time_remaining_seconds}
-            lowTime={activeAttempt.low_threshold_sec}
-            criticalLowTime={activeAttempt.critically_low_threshold_sec}
-            onLowTime={setTimeIsLow}
-            onCriticalLowTime={setCriticalTimeIsLow}
-            onLimitReached={expireExamAttempt}
-          />
-        </div>
-      </div>
-    </Alert>
+      </Alert>
+    </TimerProvider>
   );
-};
+});
 
 ExamTimerBlock.propTypes = {
-  activeAttempt: PropTypes.shape({
+  attempt: PropTypes.shape({
     exam_url_path: PropTypes.string.isRequired,
     exam_display_name: PropTypes.string.isRequired,
     time_remaining_seconds: PropTypes.number.isRequired,
     low_threshold_sec: PropTypes.number.isRequired,
     critically_low_threshold_sec: PropTypes.number.isRequired,
-  }).isRequired,
+  }),
   stopExamAttempt: PropTypes.func.isRequired,
   expireExamAttempt: PropTypes.func.isRequired,
 };
 
-const mapExamStateToProps = (state) => {
-  const { examState } = state;
-  return { activeAttempt: examState.activeAttempt };
-};
-
-export default withExamStore(
-  ExamTimerBlock, mapExamStateToProps, {
-    stopExamAttempt: stopExam,
-    expireExamAttempt: expireExam,
-  },
-);
+export default ExamTimerBlock;

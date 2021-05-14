@@ -1,19 +1,20 @@
-import React from 'react';
-import { ExamStatus } from '../constants';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import StartExamInstructions from './StartExamInstructions';
 import SubmitExamInstructions from './SubmitExamInstructions';
 import SubmittedExamInstructions from './SubmittedExamInstructions';
 import EntranceProctoredExamInstructions from './proctored_exam/EntranceProctoredExamInstructions';
 import VerificationProctoredExamInstructions from './proctored_exam/VerificationProctoredExamInstructions';
-import { startExam, continueExam, submitExam } from '../data';
-import { withExamStore } from '../hocs';
 import { isEmpty } from '../helpers';
+import { ExamStatus } from '../constants';
+import ExamStateContext from '../context';
 
-const Instructions = ({
-  attempt, examHasAttempt, isProctored, children,
-}) => {
+const Instructions = ({ children }) => {
+  const state = useContext(ExamStateContext);
+  const { attempt, isProctored } = state.exam;
+
   switch (true) {
-    case !examHasAttempt:
+    case isEmpty(attempt):
       return isProctored
         ? <EntranceProctoredExamInstructions />
         : <StartExamInstructions />;
@@ -28,11 +29,8 @@ const Instructions = ({
   }
 };
 
-const mapExamStateToProps = (state) => {
-  const { attempt, is_proctored: isProctored } = state.examState.exam;
-  return { attempt, examHasAttempt: !isEmpty(attempt), isProctored };
+Instructions.propTypes = {
+  children: PropTypes.element.isRequired,
 };
 
-export default withExamStore(
-  Instructions, mapExamStateToProps, { startExam, continueExam, submitExam },
-);
+export default Instructions;

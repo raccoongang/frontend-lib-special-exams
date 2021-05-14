@@ -14,7 +14,7 @@ import {
   setExamState,
   expireExamAttempt,
   setActiveAttempt,
-  setProctoringSettings
+  setProctoringSettings,
 } from './slice';
 import { ExamStatus } from '../constants';
 

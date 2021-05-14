@@ -37,18 +37,16 @@ const VerificationProctoredExamInstructions = () => (
     </Container>
 
     <div className="footer-sequence">
-      <p>
-        <Button
-          data-testid="request-exam-time-button"
-          variant="link"
-          onClick={() => {}}
-        >
-          <FormattedMessage
-            id="exam.startExamInstructions.footerButton"
-            defaultMessage="Can I request additional time to complete my exam?"
-          />
-        </Button>
-      </p>
+      <Button
+        data-testid="request-exam-time-button"
+        variant="link"
+        onClick={() => {}}
+      >
+        <FormattedMessage
+          id="exam.startExamInstructions.footerButton"
+          defaultMessage="About Proctored Exams"
+        />
+      </Button>
     </div>
   </div>
 );

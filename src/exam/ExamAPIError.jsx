@@ -4,6 +4,10 @@ import { Alert, Icon } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
+// Fixme: Replace with store state data once exam settings are implemented
+const platformName = 'edX';
+const contactUs = 'https://courses.edx.org/support/contact_us';
+
 export default function ExamAPIError({ details }) {
   return (
     <Alert variant="danger">
@@ -11,10 +15,20 @@ export default function ExamAPIError({ details }) {
       <Alert.Heading>
         <FormattedMessage
           id="exam.apiError.text"
-          defaultMessage="Oops, there was an error! Please contact the support."
+          defaultMessage={
+            'A system error has occurred with your exam. '
+              + 'Please reach out to {support_link} for assistance, '
+              + 'and return to the exam once you receive further instructions.'
+          }
+          values={{ support_link: <a href={contactUs} target="_blank" rel="noopener noreferrer">{platformName} Support</a> }}
         />
       </Alert.Heading>
-      <p>Details: {details}</p>
+      <p>
+        <FormattedMessage
+          id="exam.apiError.details"
+          defaultMessage="Details"
+        />: {details}
+      </p>
     </Alert>
   );
 }

@@ -30,13 +30,6 @@ const Exam = ({ isTimeLimited, children }) => {
     );
   }
 
-  // if the exam hasn't started yet that means there was an error while getting the exam data,
-  // in that case just show the error without the instructions (since instructions need some exam data
-  // to be properly displayed)
-  if (!showTimer && apiErrorMsg) {
-    return <ExamAPIError details={apiErrorMsg} />;
-  }
-
   const sequenceContent = <>{children}</>;
 
   return (

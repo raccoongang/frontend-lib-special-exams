@@ -18,8 +18,8 @@ import {
 import { ExamStatus } from '../constants';
 
 function handleAPIError(error, dispatch) {
-  const { message } = error;
-  dispatch(setApiError({ errorMsg: message }));
+  const { message, detail } = error;
+  dispatch(setApiError({ errorMsg: message || detail }));
 }
 
 function updateAttemptAfter(courseId, sequenceId, promise = null, noLoading = false) {
@@ -61,7 +61,10 @@ export function startExam() {
     const { exam } = getState().examState;
     if (!exam.id) {
       logError('Failed to start exam. No exam id.');
-      dispatch(setApiError({ errorMsg: 'Failed to start exam. No exam id was provided.' }));
+      handleAPIError(
+        { errorMsg: 'Failed to start exam. No exam id was found.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(
@@ -101,7 +104,10 @@ export function stopExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to stop exam. No attempt id.');
-      dispatch(setApiError({ errorMsg: 'Failed to stop exam. No attempt id was provided.' }));
+      handleAPIError(
+        { errorMsg: 'Failed to stop exam. No attempt id was found.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(
@@ -116,7 +122,10 @@ export function continueExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to continue exam. No attempt id.');
-      dispatch(setApiError({ errorMsg: 'Failed to continue exam. No attempt id was provided.' }));
+      handleAPIError(
+        { errorMsg: 'Failed to continue exam. No attempt id was found.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(
@@ -131,7 +140,10 @@ export function submitExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to submit exam. No attempt id.');
-      dispatch(setApiError({ errorMsg: 'Failed to submit exam. No attempt id was provided.' }));
+      handleAPIError(
+        { errorMsg: 'Failed to submit exam. No attempt id was found.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(
@@ -146,7 +158,10 @@ export function expireExam() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to expire exam. No attempt id.');
-      dispatch(setApiError({ errorMsg: 'Failed to expire exam. No attempt id was provided.' }));
+      handleAPIError(
+        { errorMsg: 'Failed to expire exam. No attempt id was provided.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(

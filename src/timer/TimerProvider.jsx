@@ -7,7 +7,6 @@ import {
   TIMER_IS_LOW,
   TIMER_LIMIT_REACHED,
 } from './events';
-import { ExamStatus } from '../constants';
 import { withExamStore } from '../hocs';
 
 /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
@@ -48,9 +47,6 @@ const TimerServiceProvider = ({ children, attempt, pollHandler }) => {
   ).join(':');
 
   const pollExam = () => {
-    if (attempt.attempt_status === ExamStatus.READY_TO_SUBMIT) {
-      return;
-    }
     const url = attempt.exam_started_poll_url;
     const queryString = `?sourceid=in_exam&proctored=${attempt.taking_as_proctored}`;
     pollHandler(url + queryString);

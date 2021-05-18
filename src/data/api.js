@@ -21,8 +21,8 @@ export async function createExamAttempt(examId, startClock = true, attemptProcto
   const url = new URL(`${getConfig().LMS_BASE_URL}${BASE_API_URL}`);
   const payload = {
     exam_id: examId,
-    start_clock: startClock,
-    attempt_proctored: attemptProctored,
+    start_clock: startClock.toString(),
+    attempt_proctored: attemptProctored.toString(),
   };
   const { data } = await getAuthenticatedHttpClient().post(url.href, payload);
   return data;
@@ -54,24 +54,8 @@ export async function endExamWithFailure(attemptId, error) {
   return updateAttemptStatus(attemptId, ExamAction.ERROR, error);
 }
 
-export async function fetchProctoringSettings() {
-  return {
-    proctorint_settings: {
-      link_urls: {
-        contact_us: 'https://example.com/contact_us/',
-        faq: 'https://example.com/faq/',
-        online_proctoring_rules: 'https://example.com/online_proctoring_rules/',
-        tech_requirements: 'https://example.com/tech_requirements/',
-      },
-    },
-    proctoring_backends: {
-      software_secure: {
-        exam_register_endpoint: '{add endpoint to SoftwareSecure}',
-        exam_sponsor: '{add SoftwareSecure sponsor}',
-        organization: '{add SoftwareSecure organization}',
-        software_download_url: '{add SoftwareSecure download url}',
-      },
-      default: 'software_secure',
-    },
-  };
+export async function fetchProctoringSettings(examId) {
+  const url = new URL(`${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/settings/exam_id/${examId}/`);
+  const { data } = await getAuthenticatedHttpClient().get(url.href);
+  return data;
 }

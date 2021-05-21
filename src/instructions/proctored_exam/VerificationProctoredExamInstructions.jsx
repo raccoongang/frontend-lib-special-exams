@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, Container } from '@edx/paragon';
 
-const VerificationProctoredExamInstructions = () => (
+const VerificationProctoredExamInstructions = ({ verify }) => (
   <div>
     <Container className="border py-5 mb-4">
       <div className="h3" data-testid="exam-instructions-title">
@@ -27,7 +28,7 @@ const VerificationProctoredExamInstructions = () => (
       <Button
         data-testid="exam.VerificationProctoredExamInstructions-continue-button"
         variant="outline-secondary"
-        onClick={() => {}}
+        onClick={() => verify()}
       >
         <FormattedMessage
           id="exam.VerificationProctoredExamInstructions.continueButton"
@@ -50,5 +51,9 @@ const VerificationProctoredExamInstructions = () => (
     </div>
   </div>
 );
+
+VerificationProctoredExamInstructions.propTypes = {
+  verify: PropTypes.func.isRequired,
+};
 
 export default VerificationProctoredExamInstructions;

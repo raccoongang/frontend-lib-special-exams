@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import StartExamInstructions from './StartExamInstructions';
 import SubmitExamInstructions from './SubmitExamInstructions';
@@ -10,6 +10,7 @@ import {
   SubmittedProctoredExamInstructions,
   VerifiedProctoredExamInstructions,
   RejectedProctoredExamInstructions,
+  DownloadSoftwareProctoredExamInstructions,
 } from './proctored_exam';
 
 import { isEmpty } from '../helpers';
@@ -20,13 +21,20 @@ const Instructions = ({ children }) => {
   const state = useContext(ExamStateContext);
   const { attempt, is_proctored: isProctored } = state.exam;
 
+  // temporary solution until we figure out how to implement actual verification
+  const [userVerified, setUserVerified] = useState(false);
+
   switch (true) {
     case isEmpty(attempt):
       return isProctored
         ? <EntranceProctoredExamInstructions />
         : <StartExamInstructions />;
     case attempt.attempt_status === ExamStatus.CREATED:
-      return <VerificationProctoredExamInstructions />;
+      return userVerified
+        ? <DownloadSoftwareProctoredExamInstructions />
+        : <VerificationProctoredExamInstructions verify={() => setUserVerified(true)} />;
+    case attempt.attempt_status === ExamStatus.DOWNLOAD_SOFTWARE_CLICKED:
+      return <DownloadSoftwareProctoredExamInstructions />;
     case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
       return isProctored
         ? <SubmitProctoredExamInstructions />

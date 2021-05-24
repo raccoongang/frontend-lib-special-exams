@@ -11,6 +11,7 @@ import {
   VerifiedProctoredExamInstructions,
   RejectedProctoredExamInstructions,
   DownloadSoftwareProctoredExamInstructions,
+  ReadyToStartProctoredExamInstructions,
 } from './proctored_exam';
 
 import { isEmpty } from '../helpers';
@@ -20,7 +21,7 @@ import ExamStateContext from '../context';
 const Instructions = ({ children }) => {
   const state = useContext(ExamStateContext);
   const { exam, verification } = state;
-  const { attempt, is_proctored: isProctored } = exam;
+  const { attempt, is_proctored: isProctored } = exam || {};
   let verificationStatus = verification.status || '';
 
   // The API does not explicitly return 'expired' status, so we have to check manually.
@@ -41,6 +42,8 @@ const Instructions = ({ children }) => {
         : <VerificationProctoredExamInstructions status={verificationStatus} />;
     case attempt.attempt_status === ExamStatus.DOWNLOAD_SOFTWARE_CLICKED:
       return <DownloadSoftwareProctoredExamInstructions />;
+    case attempt.attempt_status === ExamStatus.READY_TO_START:
+      return <ReadyToStartProctoredExamInstructions />;
     case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
       return isProctored
         ? <SubmitProctoredExamInstructions />

@@ -71,3 +71,11 @@ export async function fetchVerificationStatus() {
   const { data } = await getAuthenticatedHttpClient().get(url.href);
   return data;
 }
+
+export async function fetchExamReviewPolicy(examId) {
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/edx_proctoring/v1/proctored_exam/review_policy/exam_id/${examId}/`,
+  );
+  const { data } = await getAuthenticatedHttpClient().get(url.href);
+  return data;
+}

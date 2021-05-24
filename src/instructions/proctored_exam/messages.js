@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   cannotStartModalTitle: {
     id: 'exam.DownloadProctoringProviderSoftwareModal.title',
-    defaultMessage: 'Cannot Start Proctored Exam',
+    defaultMessage: 'Cannot Start Exam',
   },
   cannotStartModalBody: {
     id: 'exam.DownloadProctoringProviderSoftwareModal.body',
@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   softwareLoadedModalBody: {
     id: 'exam.ProctoringSoftwareDownloadedModal.body',
-    defaultMessage: 'Click "Start Proctored Exam" to proceed.',
+    defaultMessage: 'Click "Start Exam" to proceed.',
   },
 });
 

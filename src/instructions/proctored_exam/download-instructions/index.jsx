@@ -16,9 +16,14 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
   const {
     proctoringSettings,
     exam,
-    continueExam,
+    getExamAttemptsData,
   } = state;
-  const { attempt, external_id: examExternalId } = exam;
+  const {
+    attempt,
+    external_id: examExternalId,
+    course_id: courseId,
+    content_id: sequenceId,
+  } = exam;
   const {
     exam_started_poll_url: pollUrl,
     external_id: attemptExternalId,
@@ -34,7 +39,6 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
   const [systemCheckStatus, setSystemCheckStatus] = useState('');
   const [downloadClicked, setDownloadClicked] = useState(false);
   const withProviderInstructions = instructions && instructions.length > 0;
-  // const withProviderInstructions = false;
 
   const handleDownloadClick = () => {
     pollExamAttempt(`${pollUrl}?sourceid=instructions`)
@@ -52,7 +56,11 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
 
   const handleStartExamClick = () => {
     pollExamAttempt(`${attempt.exam_started_poll_url}?sourceid=instructions`)
-      .then((data) => (data.status === ExamStatus.READY_TO_START ? continueExam() : setSystemCheckStatus('failure')));
+      .then((data) => (
+        data.status === ExamStatus.READY_TO_START
+          ? getExamAttemptsData(courseId, sequenceId)
+          : setSystemCheckStatus('failure')
+      ));
   };
 
   return (
@@ -61,14 +69,14 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
         <WarningModal
           isOpen={Boolean(systemCheckStatus)}
           title={
-            systemCheckStatus === 'failure'
-              ? intl.formatMessage(messages.cannotStartModalTitle)
-              : intl.formatMessage(messages.softwareLoadedModalTitle)
+            systemCheckStatus === 'success'
+              ? intl.formatMessage(messages.softwareLoadedModalTitle)
+              : intl.formatMessage(messages.cannotStartModalTitle)
           }
           body={
-            systemCheckStatus === 'failure'
-              ? intl.formatMessage(messages.cannotStartModalBody)
-              : intl.formatMessage(messages.softwareLoadedModalBody)
+            systemCheckStatus === 'success'
+              ? intl.formatMessage(messages.softwareLoadedModalBody)
+              : intl.formatMessage(messages.cannotStartModalBody)
           }
           handleClose={() => setSystemCheckStatus('')}
         />

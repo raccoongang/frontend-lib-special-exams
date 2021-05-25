@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { getConfig } from '@edx/frontend-platform';
 import Exam from './Exam';
 import ExamStateContext from '../context';
 
@@ -9,6 +10,7 @@ import ExamStateContext from '../context';
 const ExamWrapper = ({ children, ...props }) => {
   const state = useContext(ExamStateContext);
   const { sequence, courseId } = props;
+  const allowProctoringExam = getConfig().ENABLE_PROCTORING_EXAM;
 
   const loadInitialData = async () => {
     await state.getExamAttemptsData(courseId, sequence.id);
@@ -20,7 +22,11 @@ const ExamWrapper = ({ children, ...props }) => {
   }, []);
 
   return (
-    <Exam isTimeLimited={sequence.isTimeLimited}>
+    <Exam
+      isTimeLimited={sequence.isTimeLimited}
+      legacyWebUrl={sequence.legacyWebUrl}
+      allowProctoringExam={allowProctoringExam}
+    >
       {children}
     </Exam>
   );
@@ -30,6 +36,7 @@ ExamWrapper.propTypes = {
   sequence: PropTypes.shape({
     id: PropTypes.string.isRequired,
     isTimeLimited: PropTypes.bool,
+    legacyWebUrl: PropTypes.string,
   }).isRequired,
   courseId: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,

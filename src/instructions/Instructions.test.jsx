@@ -217,4 +217,87 @@ describe('SequenceExamWrapper', () => {
     expect(screen.getByText('Your exam is ready to be resumed.')).toBeInTheDocument();
     expect(screen.getByTestId('start-exam-button')).toHaveTextContent('Continue to my proctored exam.');
   });
+
+  it('Instructions are shown when attempt status is ready_to_submit', () => {
+    store.getState = () => ({
+      examState: {
+        isLoading: false,
+        activeAttempt: {
+          attempt_status: 'ready_to_submit',
+        },
+        exam: {
+          time_limit_mins: 30,
+          attempt: {
+            attempt_status: 'ready_to_submit',
+          },
+        },
+      },
+    });
+
+    const { getByTestId } = render(
+      <ExamStateProvider>
+        <Instructions>
+          <div>Sequence</div>
+        </Instructions>
+      </ExamStateProvider>,
+      { store },
+    );
+    expect(getByTestId('exam-instructions-title')).toHaveTextContent('Are you sure that you want to submit your timed exam?');
+  });
+
+  it('Instructions are shown when attempt status is submitted', () => {
+    store.getState = () => ({
+      examState: {
+        isLoading: false,
+        timeIsOver: false,
+        activeAttempt: {
+          attempt_status: 'submitted',
+        },
+        exam: {
+          time_limit_mins: 30,
+          attempt: {
+            attempt_status: 'submitted',
+          },
+        },
+      },
+    });
+
+    const { getByTestId } = render(
+      <ExamStateProvider>
+        <Instructions>
+          <div>Sequence</div>
+        </Instructions>
+      </ExamStateProvider>,
+      { store },
+    );
+    expect(getByTestId('exam.submittedExamInstructions.title')).toHaveTextContent('You have submitted your timed exam.');
+  });
+
+  it('Instructions are shown when exam time is over', () => {
+    store.getState = () => ({
+      examState: {
+        isLoading: false,
+        timeIsOver: true,
+        activeAttempt: {
+          attempt_status: 'submitted',
+        },
+        exam: {
+          time_limit_mins: 30,
+          attempt: {
+            attempt_status: 'submitted',
+          },
+        },
+      },
+    });
+
+    const { getByTestId } = render(
+      <ExamStateProvider>
+        <Instructions>
+          <div>Sequence</div>
+        </Instructions>
+      </ExamStateProvider>,
+      { store },
+    );
+    expect(getByTestId('exam.submittedExamInstructions.title')).toHaveTextContent('The time allotted for this exam has expired.');
+  });
 });

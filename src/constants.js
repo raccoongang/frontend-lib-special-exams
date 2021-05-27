@@ -32,3 +32,10 @@ export const VerificationStatus = Object.freeze({
   APPROVED: 'approved',
   EXPIRED: 'expired',
 });
+
+export const ExamType = Object.freeze({
+  ONBOARDING: 'onboarding',
+  PRACTICE: 'practice',
+  PROCTORED: 'proctored',
+  TIMED: 'timed',
+});

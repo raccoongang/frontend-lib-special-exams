@@ -177,7 +177,7 @@ export function stopExam() {
 
 export function continueExam(noLoading = true) {
   return async (dispatch, getState) => {
-    const { exam } = getState().examState;
+    const { exam, activeAttempt } = getState().examState;
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to continue exam. No attempt id.');
@@ -187,9 +187,23 @@ export function continueExam(noLoading = true) {
       );
       return;
     }
-    await updateAttemptAfter(
-      exam.course_id, exam.content_id, continueAttempt(attemptId), noLoading,
-    )(dispatch);
+
+    const useWorker = !activeAttempt && window.Worker && exam.attempt.desktop_application_js_url;
+
+    if (useWorker) {
+      workerPromiseForEventNames(actionToMessageTypesMap.start, exam.attempt.desktop_application_js_url)()
+        .then(() => updateAttemptAfter(
+          exam.course_id, exam.content_id, continueAttempt(attemptId), noLoading,
+        )(dispatch))
+        .catch(() => handleAPIError(
+          { message: 'Something has gone wrong starting your exam. Please double-check that the application is running.' },
+          dispatch,
+        ));
+    } else {
+      await updateAttemptAfter(
+        exam.course_id, exam.content_id, continueAttempt(attemptId), noLoading,
+      )(dispatch);
+    }
   };
 }
 

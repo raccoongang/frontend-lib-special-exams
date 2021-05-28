@@ -222,6 +222,11 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        timeIsOver: false,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'ready_to_submit',
         },
@@ -250,6 +255,10 @@ describe('SequenceExamWrapper', () => {
       examState: {
         isLoading: false,
         timeIsOver: false,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'submitted',
         },
@@ -278,6 +287,10 @@ describe('SequenceExamWrapper', () => {
       examState: {
         isLoading: false,
         timeIsOver: true,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'submitted',
         },

@@ -28,14 +28,12 @@ const EntranceProctoredExamInstructions = () => {
             </p>
           </div>
         ) : (
-          <p>
-            <div className="h3" data-testid="proctored-exam-instructions-title">
-              <FormattedMessage
-                id="exam.EntranceProctoredExamInstructions.title"
-                defaultMessage="This exam is proctored"
-              />
-            </div>
-          </p>
+          <div className="h3" data-testid="proctored-exam-instructions-title">
+            <FormattedMessage
+              id="exam.EntranceProctoredExamInstructions.title"
+              defaultMessage="This exam is proctored"
+            />
+          </div>
         )}
         <p>
           <FormattedMessage

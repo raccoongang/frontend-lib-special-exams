@@ -21,6 +21,13 @@ describe('SequenceExamWrapper', () => {
       examState: {
         isLoading: false,
         activeAttempt: null,
+        proctoringSettings: {
+          platform_name: 'Your Platform',
+        },
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         exam: {
           is_proctored: true,
           time_limit_mins: 30,
@@ -44,6 +51,10 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'started',
         },
@@ -72,6 +83,13 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        proctoringSettings: {
+          platform_name: 'Your Platform',
+        },
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'created',
         },
@@ -97,10 +115,53 @@ describe('SequenceExamWrapper', () => {
       .toHaveTextContent('Continue to Verification');
   });
 
+  it('Instructions are shown when attempt status is ready_to_start', () => {
+    store.getState = () => ({
+      examState: {
+        isLoading: false,
+        proctoringSettings: {
+          platform_name: 'Your Platform',
+        },
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
+        activeAttempt: {
+          attempt_status: 'ready_to_start',
+        },
+        exam: {
+          is_proctored: true,
+          time_limit_mins: 30,
+          attempt: {
+            attempt_status: 'ready_to_start',
+          },
+        },
+      },
+    });
+
+    const { getByTestId } = render(
+      <ExamStateProvider>
+        <Instructions>
+          <div>Sequence</div>
+        </Instructions>
+      </ExamStateProvider>,
+      { store },
+    );
+    expect(getByTestId('proctored-exam-instructions-rulesLink'))
+      .toHaveTextContent('Rules for Online Proctored Exams');
+  });
+
   it('Instructions are shown when attempt status is submitted', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        proctoringSettings: {
+          platform_name: 'Your Platform',
+        },
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'submitted',
         },
@@ -129,6 +190,10 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'ready_to_submit',
         },
@@ -157,6 +222,13 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        proctoringSettings: {
+          platform_name: 'Your Platform',
+        },
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'verified',
         },
@@ -185,6 +257,10 @@ describe('SequenceExamWrapper', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
+        verification: {
+          status: 'none',
+          can_verify: true,
+        },
         activeAttempt: {
           attempt_status: 'rejected',
         },

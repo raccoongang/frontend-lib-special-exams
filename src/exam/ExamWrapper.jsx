@@ -12,7 +12,6 @@ const ExamWrapper = ({ children, ...props }) => {
 
   const loadInitialData = async () => {
     await state.getExamAttemptsData(courseId, sequence.id);
-    await state.getAllowProctoringOptOut(sequence.id);
     state.getProctoringSettings();
     state.getVerificationData();
   };

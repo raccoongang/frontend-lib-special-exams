@@ -7,7 +7,8 @@ import ExamStateContext from '../../context';
 
 const EntranceProctoredExamInstructions = ({ skipProctoredExam }) => {
   const state = useContext(ExamStateContext);
-  const { exam, startProctoringExam, allowProctoringOptOut } = state;
+  const { exam, startProctoringExam } = state;
+  const { allow_proctoring_opt_out: allowProctoringOptOut } = exam;
 
   return (
     <>

@@ -1,7 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import SubmittedExamInstructions from './SubmittedExamInstructions';
 import {
+  ErrorProctoredExamInstructions,
   VerificationProctoredExamInstructions,
+  SubmittedProctoredExamInstructions,
+  VerifiedProctoredExamInstructions,
   DownloadSoftwareProctoredExamInstructions,
   ReadyToStartProctoredExamInstructions,
   PrerequisitesProctoredExamInstructions,
@@ -13,9 +17,6 @@ import ExamStateContext from '../context';
 import EntranceExamInstructions from './EntranceInstructions';
 import SubmitExamInstructions from './SubmitInstructions';
 import RejectedInstructions from './RejectedInstructions';
-import ErrorExamInstructions from './ErrorInstructions';
-import SubmittedExamInstructions from './SubmittedInstructions';
-import VerifiedExamInstructions from './VerifiedInstructions';
 
 const Instructions = ({ children }) => {
   const state = useContext(ExamStateContext);
@@ -62,13 +63,15 @@ const Instructions = ({ children }) => {
     case attempt.attempt_status === ExamStatus.READY_TO_SUBMIT:
       return <SubmitExamInstructions examType={examType} />;
     case attempt.attempt_status === ExamStatus.SUBMITTED:
-      return <SubmittedExamInstructions examType={examType} />;
+      return examType === ExamType.PROCTORED
+        ? <SubmittedProctoredExamInstructions />
+        : <SubmittedExamInstructions />;
     case attempt.attempt_status === ExamStatus.VERIFIED:
-      return <VerifiedExamInstructions examType={examType} />;
+      return <VerifiedProctoredExamInstructions />;
     case attempt.attempt_status === ExamStatus.REJECTED:
       return <RejectedInstructions examType={examType} />;
     case attempt.attempt_status === ExamStatus.ERROR:
-      return <ErrorExamInstructions examType={examType} />;
+      return <ErrorProctoredExamInstructions />;
     case attempt.attempt_status === ExamStatus.READY_TO_RESUME:
       return <EntranceExamInstructions examType={examType} skipProctoredExam={toggleSkipProctoredExam} />;
     default:

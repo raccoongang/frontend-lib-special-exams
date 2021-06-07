@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   VerificationProctoredExamInstructions,
@@ -26,7 +26,7 @@ import ExpiredInstructions from './ExpiredInstructions';
 
 const Instructions = ({ children }) => {
   const state = useContext(ExamStateContext);
-  const { exam, verification, getVerificationData } = state;
+  const { exam, verification } = state;
   const { attempt, type: examType, prerequisite_status: prerequisitesData } = exam || {};
   const prerequisitesPassed = prerequisitesData ? prerequisitesData.are_prerequisites_satisifed : true;
   let verificationStatus = verification.status || '';
@@ -50,12 +50,6 @@ const Instructions = ({ children }) => {
     }
     return component;
   };
-
-  useEffect(() => {
-    if (examType === ExamType.PROCTORED) {
-      getVerificationData();
-    }
-  }, []);
 
   // The API does not explicitly return 'expired' status, so we have to check manually.
   // expires attribute is returned only for approved status, so it is safe to do this

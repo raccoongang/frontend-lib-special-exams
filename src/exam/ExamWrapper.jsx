@@ -9,10 +9,9 @@ import ExamStateContext from '../context';
 const ExamWrapper = ({ children, ...props }) => {
   const state = useContext(ExamStateContext);
   const { sequence, courseId } = props;
-  const { getExamAttemptsData, getProctoringSettings } = state;
+  const { getExamAttemptsData } = state;
   const loadInitialData = async () => {
     await getExamAttemptsData(courseId, sequence.id);
-    await getProctoringSettings();
   };
 
   useEffect(() => {

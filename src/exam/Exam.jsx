@@ -19,14 +19,17 @@ import { ExamType } from '../constants';
 const Exam = ({ isTimeLimited, children }) => {
   const state = useContext(ExamStateContext);
   const {
-    isLoading, activeAttempt, showTimer, stopExam,
+    isLoading, activeAttempt, showTimer, stopExam, exam,
     expireExam, pollAttempt, apiErrorMsg, pingAttempt,
-    exam, getVerificationData, getAllowProctoringOptOut,
+    getVerificationData, getAllowProctoringOptOut, getProctoringSettings,
   } = state;
 
   const { type: examType, content_id: sequenceId, id: examId } = exam || {};
 
   useEffect(() => {
+    if (examId) {
+      getProctoringSettings();
+    }
     if (examType === ExamType.PROCTORED) {
       getVerificationData();
       getAllowProctoringOptOut(sequenceId);
@@ -58,7 +61,7 @@ const Exam = ({ isTimeLimited, children }) => {
           pingAttempt={pingAttempt}
         />
       )}
-      {apiErrorMsg && <ExamAPIError details={apiErrorMsg} />}
+      {apiErrorMsg && <ExamAPIError />}
       {isTimeLimited
         ? <Instructions>{sequenceContent}</Instructions>
         : sequenceContent}

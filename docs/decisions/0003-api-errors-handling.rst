@@ -21,6 +21,7 @@ and it will take care of rendering the error in case there is one.
 The handler is located in src/data/thunks.js and looks as follows
 
 .. code-block:: javascript
+
     function handleAPIError(error, dispatch) {
       const { message, detail } = error;
       dispatch(setApiError({ errorMsg: message || detail }));
@@ -30,6 +31,7 @@ The handler is located in src/data/thunks.js and looks as follows
 For example, to render an error which comes from the API directly you would do:
 
 .. code-block:: javascript
+
     try {
       const data = await fetchExamReviewPolicy(exam.id);
     } catch (error) {
@@ -40,6 +42,7 @@ For example, to render an error which comes from the API directly you would do:
 if you want to render custom message:
 
 .. code-block:: javascript
+
     try {
       const data = await fetchExamReviewPolicy(exam.id);
     } catch (error) {

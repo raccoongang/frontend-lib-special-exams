@@ -59,6 +59,8 @@ const Instructions = ({ children }) => {
   }
 
   switch (true) {
+    case isEmpty(attempt) || !attempt.attempt_id:
+      return renderEmptyAttemptInstructions();
     case isEmpty(attempt):
       return renderEmptyAttemptInstructions();
     case attempt.attempt_status === ExamStatus.CREATED:

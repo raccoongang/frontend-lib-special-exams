@@ -66,6 +66,7 @@ describe('SequenceExamWrapper', () => {
           type: ExamType.PROCTORED,
           attempt: {
             attempt_status: ExamStatus.STARTED,
+            attempt_id: 1,
           },
         },
       },
@@ -247,6 +248,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.ERROR,
+            attempt_id: 1,
           },
         },
       },
@@ -281,6 +283,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.READY_TO_RESUME,
+            attempt_id: 1,
           },
         },
       },
@@ -314,6 +317,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.READY_TO_SUBMIT,
+            attempt_id: 1,
           },
         },
       },
@@ -346,6 +350,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.SUBMITTED,
+            attempt_id: 1,
           },
         },
       },
@@ -378,6 +383,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.SUBMITTED,
+            attempt_id: 1,
           },
         },
       },
@@ -409,6 +415,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.REJECTED,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -443,6 +450,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.READY_TO_SUBMIT,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -477,6 +485,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.ERROR,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -514,6 +523,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.SUBMITTED,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -557,6 +567,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.VERIFIED,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -592,6 +603,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.ERROR,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },
@@ -627,6 +639,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: ExamStatus.SUBMITTED,
+            attempt_id: 1,
           },
           prerequisite_status: {},
         },

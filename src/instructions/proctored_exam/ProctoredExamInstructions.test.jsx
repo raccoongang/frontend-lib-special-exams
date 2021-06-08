@@ -75,6 +75,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'started',
+            attempt_id: 1,
           },
         },
       },
@@ -111,6 +112,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'created',
+            attempt_id: 1,
           },
         },
       },
@@ -148,6 +150,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'ready_to_start',
+            attempt_id: 1,
           },
         },
       },
@@ -185,6 +188,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'submitted',
+            attempt_id: 1,
           },
         },
       },
@@ -219,6 +223,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'ready_to_submit',
+            attempt_id: 1,
           },
         },
       },
@@ -255,6 +260,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'verified',
+            attempt_id: 1,
           },
         },
       },
@@ -289,6 +295,7 @@ describe('SequenceExamWrapper', () => {
           time_limit_mins: 30,
           attempt: {
             attempt_status: 'rejected',
+            attempt_id: 1,
           },
         },
       },

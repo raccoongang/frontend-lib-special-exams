@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@edx/paragon';
 import { ExamTimerBlock } from '../timer';
 import Instructions from '../instructions';
 import ExamStateContext from '../context';
 import ExamAPIError from './ExamAPIError';
+import { ExamType } from '../constants';
 
 /**
  * Exam component is intended to render exam instructions before and after exam.
@@ -20,7 +21,21 @@ const Exam = ({ isTimeLimited, children }) => {
   const {
     isLoading, activeAttempt, showTimer, stopExam,
     expireExam, pollAttempt, apiErrorMsg, pingAttempt,
+    exam, getVerificationData, getAllowProctoringOptOut,
   } = state;
+
+  const { type: examType, content_id: sequenceId, id: examId } = exam || {};
+
+  useEffect(() => {
+    if (examType === ExamType.PROCTORED) {
+      getVerificationData();
+      getAllowProctoringOptOut(sequenceId);
+    }
+
+    // this makes sure useEffect gets called only one time after the exam has been fetched
+    // we can't leave this empty since initially exam is just an empty object, so
+    // API calls above would not get triggered
+  }, [examId]);
 
   if (isLoading) {
     return (

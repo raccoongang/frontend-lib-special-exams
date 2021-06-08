@@ -75,10 +75,8 @@ export function getProctoringSettings() {
       logError('Failed to get exam settings. No exam id.');
       return;
     }
-    dispatch(setIsLoading({ isLoading: true }));
     const proctoringSettings = await fetchProctoringSettings(exam.id);
     dispatch(setProctoringSettings({ proctoringSettings }));
-    dispatch(setIsLoading({ isLoading: false }));
   };
 }
 

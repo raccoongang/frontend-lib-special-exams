@@ -73,10 +73,18 @@ export function getProctoringSettings() {
     const { exam } = getState().examState;
     if (!exam.id) {
       logError('Failed to get exam settings. No exam id.');
+      handleAPIError(
+        { message: 'Failed to fetch proctoring settings. No exam id was found.' },
+        dispatch,
+      );
       return;
     }
-    const proctoringSettings = await fetchProctoringSettings(exam.id);
-    dispatch(setProctoringSettings({ proctoringSettings }));
+    try {
+      const proctoringSettings = await fetchProctoringSettings(exam.id);
+      dispatch(setProctoringSettings({ proctoringSettings }));
+    } catch (error) {
+      handleAPIError(error, dispatch);
+    }
   };
 }
 
@@ -177,20 +185,22 @@ export function pollAttempt(url) {
       return;
     }
 
-    const data = await pollExamAttempt(url).catch(
-      error => handleAPIError(error, dispatch),
-    );
-    const updatedAttempt = {
-      ...currentAttempt,
-      time_remaining_seconds: data.time_remaining_seconds,
-      accessibility_time_string: data.accessibility_time_string,
-      attempt_status: data.status,
-    };
-    dispatch(setActiveAttempt({
-      activeAttempt: updatedAttempt,
-    }));
-    if (data.status === ExamStatus.SUBMITTED) {
-      dispatch(expireExamAttempt());
+    try {
+      const data = await pollExamAttempt(url);
+      const updatedAttempt = {
+        ...currentAttempt,
+        time_remaining_seconds: data.time_remaining_seconds,
+        accessibility_time_string: data.accessibility_time_string,
+        attempt_status: data.status,
+      };
+      dispatch(setActiveAttempt({
+        activeAttempt: updatedAttempt,
+      }));
+      if (data.status === ExamStatus.SUBMITTED) {
+        dispatch(expireExamAttempt());
+      }
+    } catch (error) {
+      handleAPIError(error, dispatch);
     }
   };
 }
@@ -286,7 +296,7 @@ export function expireExam() {
     if (!attemptId) {
       logError('Failed to expire exam. No attempt id.');
       handleAPIError(
-        { message: 'Failed to expire exam. No attempt id was provided.' },
+        { message: 'Failed to expire exam. No attempt id was found.' },
         dispatch,
       );
       return;
@@ -328,6 +338,10 @@ export function startProctoringSoftwareDownload() {
     const attemptId = exam.attempt.attempt_id;
     if (!attemptId) {
       logError('Failed to start downloading proctoring software. No attempt id.');
+      handleAPIError(
+        { message: 'Failed to start downloading proctoring software. No attempt id was found.' },
+        dispatch,
+      );
       return;
     }
     await updateAttemptAfter(
@@ -338,8 +352,12 @@ export function startProctoringSoftwareDownload() {
 
 export function getVerificationData() {
   return async (dispatch) => {
-    const data = await fetchVerificationStatus();
-    dispatch(setVerificationData({ verification: data }));
+    try {
+      const data = await fetchVerificationStatus();
+      dispatch(setVerificationData({ verification: data }));
+    } catch (error) {
+      handleAPIError(error, dispatch);
+    }
   };
 }
 
@@ -348,18 +366,30 @@ export function getExamReviewPolicy() {
     const { exam } = getState().examState;
     if (!exam.id) {
       logError('Failed to fetch exam review policy. No exam id.');
+      handleAPIError(
+        { message: 'Failed to fetch exam review policy. No exam id was found.' },
+        dispatch,
+      );
       return;
     }
-    const data = await fetchExamReviewPolicy(exam.id);
-    dispatch(setReviewPolicy({ policy: data.review_policy }));
+    try {
+      const data = await fetchExamReviewPolicy(exam.id);
+      dispatch(setReviewPolicy({ policy: data.review_policy }));
+    } catch (error) {
+      handleAPIError(error, dispatch);
+    }
   };
 }
 
 export function getAllowProctoringOptOut(sequenceId) {
   return async (dispatch) => {
     dispatch(setIsLoading({ isLoading: true }));
-    const data = await getSequenceMetadata(sequenceId);
-    dispatch(setAllowProctoringOptOut({ allowProctoringOptOut: data.allow_proctoring_opt_out }));
+    try {
+      const data = await getSequenceMetadata(sequenceId);
+      dispatch(setAllowProctoringOptOut({ allowProctoringOptOut: data.allow_proctoring_opt_out }));
+    } catch (error) {
+      handleAPIError(error, dispatch);
+    }
     dispatch(setIsLoading({ isLoading: false }));
   };
 }

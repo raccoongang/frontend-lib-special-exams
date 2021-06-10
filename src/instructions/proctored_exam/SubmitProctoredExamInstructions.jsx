@@ -13,7 +13,7 @@ const SubmitProctoredExamInstructions = () => {
     activeAttempt,
   } = state;
   const { type: examType } = exam || {};
-  const { exam_display_name: examName } = activeAttempt;
+  const { exam_display_name: examName, can_continue: canContinue } = activeAttempt;
 
   return (
     <>
@@ -49,19 +49,20 @@ const SubmitProctoredExamInstructions = () => {
           />
         </p>
       )}
-      <Button variant="primary" onClick={submitExam}>
+      <Button variant="primary" onClick={submitExam} className="mr-2" data-testid="end-exam-button">
         <FormattedMessage
           id="exam.SubmitProctoredExamInstructions.submit"
           defaultMessage="Yes, end my proctored exam"
         />
       </Button>
-      &nbsp;
-      <Button variant="outline-primary" onClick={continueExam}>
-        <FormattedMessage
-          id="exam.SubmitProctoredExamInstructions.continue"
-          defaultMessage="No, I'd like to continue working"
-        />
-      </Button>
+      {canContinue && (
+        <Button variant="outline-primary" onClick={continueExam} data-testid="continue-exam-button">
+          <FormattedMessage
+            id="exam.SubmitProctoredExamInstructions.continue"
+            defaultMessage="No, I'd like to continue working"
+          />
+        </Button>
+      )}
     </>
   );
 };

@@ -5,7 +5,8 @@ import ExamStateContext from '../../context';
 
 const SubmitTimedExamInstructions = () => {
   const state = useContext(ExamStateContext);
-  const { submitExam, continueExam } = state;
+  const { submitExam, continueExam, activeAttempt } = state;
+  const { can_continue: canContinue } = activeAttempt;
 
   return (
     <>
@@ -27,19 +28,20 @@ const SubmitTimedExamInstructions = () => {
           defaultMessage="After you submit your exam, your exam will be graded."
         />
       </p>
-      <Button variant="primary" onClick={submitExam}>
+      <Button variant="primary" onClick={submitExam} className="mr-2" data-testid="end-exam-button">
         <FormattedMessage
           id="exam.submitExamInstructions.submit"
           defaultMessage="Yes, submit my timed exam."
         />
       </Button>
-      &nbsp;
-      <Button variant="outline-primary" onClick={continueExam}>
-        <FormattedMessage
-          id="exam.submitExamInstructions.continue"
-          defaultMessage="No, I want to continue working."
-        />
-      </Button>
+      {canContinue && (
+        <Button variant="outline-primary" onClick={continueExam} data-testid="continue-exam-button">
+          <FormattedMessage
+            id="exam.submitExamInstructions.continue"
+            defaultMessage="No, I want to continue working."
+          />
+        </Button>
+      )}
     </>
   );
 };

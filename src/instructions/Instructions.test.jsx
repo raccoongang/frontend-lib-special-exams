@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent } from '@testing-library/dom';
 import Instructions from './index';
 import { store, getExamAttemptsData, startExam } from '../data';
+import { continueExam, submitExam } from '../data/thunks';
 import { render, screen } from '../setupTest';
 import { ExamStateProvider } from '../index';
 import {
@@ -17,6 +18,13 @@ jest.mock('../data', () => ({
   getExamAttemptsData: jest.fn(),
   startExam: jest.fn(),
 }));
+jest.mock('../data/thunks', () => ({
+  continueExam: jest.fn(),
+  getExamReviewPolicy: jest.fn(),
+  submitExam: jest.fn(),
+}));
+continueExam.mockReturnValue(jest.fn());
+submitExam.mockReturnValue(jest.fn());
 getExamAttemptsData.mockReturnValue(jest.fn());
 startExam.mockReturnValue(jest.fn());
 store.subscribe = jest.fn();
@@ -301,7 +309,7 @@ describe('SequenceExamWrapper', () => {
     expect(screen.getByTestId('start-exam-button')).toHaveTextContent('Continue to my proctored exam.');
   });
 
-  it('Instructions for ready to submit status', () => {
+  it.each([true, false])('Shows correct instructions when attempt status is ready_to_submit and can_continue is %s', (canContinue) => {
     store.getState = () => ({
       examState: {
         isLoading: false,
@@ -311,7 +319,9 @@ describe('SequenceExamWrapper', () => {
           can_verify: true,
         },
         proctoringSettings: {},
-        activeAttempt: {},
+        activeAttempt: {
+          can_continue: canContinue,
+        },
         exam: {
           type: ExamType.TIMED,
           time_limit_mins: 30,
@@ -323,7 +333,7 @@ describe('SequenceExamWrapper', () => {
       },
     });
 
-    const { getByTestId } = render(
+    const { queryByTestId } = render(
       <ExamStateProvider>
         <Instructions>
           <div>Sequence</div>
@@ -331,7 +341,18 @@ describe('SequenceExamWrapper', () => {
       </ExamStateProvider>,
       { store },
     );
-    expect(getByTestId('exam-instructions-title')).toHaveTextContent('Are you sure that you want to submit your timed exam?');
+
+    expect(queryByTestId('exam-instructions-title')).toHaveTextContent('Are you sure that you want to submit your timed exam?');
+    const continueButton = queryByTestId('continue-exam-button');
+    if (canContinue) {
+      expect(continueButton).toBeInTheDocument();
+      fireEvent.click(continueButton);
+      expect(continueExam).toHaveBeenCalled();
+    } else {
+      expect(continueButton).not.toBeInTheDocument();
+    }
+    fireEvent.click(queryByTestId('end-exam-button'));
+    expect(submitExam).toHaveBeenCalled();
   });
 
   it('Instructions for submitted status', () => {

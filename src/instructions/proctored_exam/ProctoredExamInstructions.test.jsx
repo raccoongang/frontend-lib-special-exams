@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent } from '@testing-library/dom';
 import Instructions from '../index';
 import { store, getExamAttemptsData, startExam } from '../../data';
+import { continueExam, submitExam } from '../../data/thunks';
 import { render } from '../../setupTest';
 import { ExamStateProvider } from '../../index';
 import { ExamStatus, ExamType, ONBOARDING_ERRORS } from '../../constants';
@@ -12,6 +13,13 @@ jest.mock('../../data', () => ({
   getExamAttemptsData: jest.fn(),
   startExam: jest.fn(),
 }));
+jest.mock('../../data/thunks', () => ({
+  continueExam: jest.fn(),
+  getExamReviewPolicy: jest.fn(),
+  submitExam: jest.fn(),
+}));
+continueExam.mockReturnValue(jest.fn());
+submitExam.mockReturnValue(jest.fn());
 getExamAttemptsData.mockReturnValue(jest.fn());
 startExam.mockReturnValue(jest.fn());
 store.subscribe = jest.fn();
@@ -205,7 +213,7 @@ describe('SequenceExamWrapper', () => {
     expect(getByTestId('proctored-exam-instructions-title')).toHaveTextContent('You have submitted this proctored exam for review');
   });
 
-  it('Instructions are shown when attempt status is ready_to_submit', () => {
+  it.each([true, false])('Shows correct instructions when attempt status is ready_to_submit and can_continue is %s', (canContinue) => {
     store.getState = () => ({
       examState: {
         isLoading: false,
@@ -215,6 +223,7 @@ describe('SequenceExamWrapper', () => {
         },
         activeAttempt: {
           attempt_status: 'ready_to_submit',
+          can_continue: canContinue,
         },
         proctoringSettings: {},
         exam: {
@@ -229,7 +238,7 @@ describe('SequenceExamWrapper', () => {
       },
     });
 
-    const { getByTestId } = render(
+    const { queryByTestId } = render(
       <ExamStateProvider>
         <Instructions>
           <div>Sequence</div>
@@ -237,7 +246,18 @@ describe('SequenceExamWrapper', () => {
       </ExamStateProvider>,
       { store },
     );
-    expect(getByTestId('proctored-exam-instructions-title')).toHaveTextContent('Are you sure you want to end your proctored exam?');
+
+    expect(queryByTestId('proctored-exam-instructions-title')).toHaveTextContent('Are you sure you want to end your proctored exam?');
+    const continueButton = queryByTestId('continue-exam-button');
+    if (canContinue) {
+      expect(continueButton).toBeInTheDocument();
+      fireEvent.click(continueButton);
+      expect(continueExam).toHaveBeenCalledTimes(1);
+    } else {
+      expect(continueButton).not.toBeInTheDocument();
+    }
+    fireEvent.click(queryByTestId('end-exam-button'));
+    expect(submitExam).toHaveBeenCalled();
   });
 
   it('Instructions are shown when attempt status is verified', () => {

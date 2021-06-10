@@ -8,6 +8,8 @@ import ExamStateContext from '../../context';
 const EntranceProctoredExamInstructions = ({ skipProctoredExam }) => {
   const state = useContext(ExamStateContext);
   const { exam, startProctoringExam, allowProctoringOptOut } = state;
+  const { attempt } = exam;
+  const { total_time: totalTime } = attempt;
 
   return (
     <>
@@ -22,7 +24,8 @@ const EntranceProctoredExamInstructions = ({ skipProctoredExam }) => {
           <p>
             <FormattedMessage
               id="exam.ReadyToResumeProctoredExamInstructions.text"
-              defaultMessage="You will have 25 minutes to complete your exam."
+              defaultMessage="You will have {totalTime} to complete your exam."
+              values={{ totalTime }}
             />
           </p>
         </div>

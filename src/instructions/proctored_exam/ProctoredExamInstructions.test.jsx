@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent } from '@testing-library/dom';
 import Instructions from '../index';
 import { store, getExamAttemptsData, startExam } from '../../data';
+import { submitExam } from '../../data/thunks';
 import { render } from '../../setupTest';
 import { ExamStateProvider } from '../../index';
 import { ExamStatus, ExamType, ONBOARDING_ERRORS } from '../../constants';
@@ -12,6 +13,11 @@ jest.mock('../../data', () => ({
   getExamAttemptsData: jest.fn(),
   startExam: jest.fn(),
 }));
+jest.mock('../../data/thunks', () => ({
+  getExamReviewPolicy: jest.fn(),
+  submitExam: jest.fn(),
+}));
+submitExam.mockReturnValue(jest.fn());
 getExamAttemptsData.mockReturnValue(jest.fn());
 startExam.mockReturnValue(jest.fn());
 store.subscribe = jest.fn();
@@ -205,7 +211,7 @@ describe('SequenceExamWrapper', () => {
     expect(getByTestId('proctored-exam-instructions-title')).toHaveTextContent('You have submitted this proctored exam for review');
   });
 
-  it('Instructions are shown when attempt status is ready_to_submit', () => {
+  it('Shows correct instructions when attempt status is ready_to_submit ', () => {
     store.getState = () => ({
       examState: {
         isLoading: false,
@@ -229,7 +235,7 @@ describe('SequenceExamWrapper', () => {
       },
     });
 
-    const { getByTestId } = render(
+    const { queryByTestId } = render(
       <ExamStateProvider>
         <Instructions>
           <div>Sequence</div>
@@ -237,7 +243,10 @@ describe('SequenceExamWrapper', () => {
       </ExamStateProvider>,
       { store },
     );
-    expect(getByTestId('proctored-exam-instructions-title')).toHaveTextContent('Are you sure you want to end your proctored exam?');
+
+    expect(queryByTestId('proctored-exam-instructions-title')).toHaveTextContent('Are you sure you want to end your proctored exam?');
+    fireEvent.click(queryByTestId('end-exam-button'));
+    expect(submitExam).toHaveBeenCalled();
   });
 
   it('Instructions are shown when attempt status is verified', () => {

@@ -3,7 +3,10 @@ import React from 'react';
 import { fireEvent } from '@testing-library/dom';
 import Instructions from './index';
 import { store, getExamAttemptsData, startExam } from '../data';
-import { render, screen } from '../setupTest';
+import { continueExam, submitExam } from '../data/thunks';
+import Emitter from '../data/emitter';
+import { TIMER_REACHED_NULL } from '../timer/events';
+import { render, screen, act } from '../setupTest';
 import { ExamStateProvider } from '../index';
 import {
   ExamStatus,
@@ -17,6 +20,13 @@ jest.mock('../data', () => ({
   getExamAttemptsData: jest.fn(),
   startExam: jest.fn(),
 }));
+jest.mock('../data/thunks', () => ({
+  continueExam: jest.fn(),
+  getExamReviewPolicy: jest.fn(),
+  submitExam: jest.fn(),
+}));
+continueExam.mockReturnValue(jest.fn());
+submitExam.mockReturnValue(jest.fn());
 getExamAttemptsData.mockReturnValue(jest.fn());
 startExam.mockReturnValue(jest.fn());
 store.subscribe = jest.fn();
@@ -301,7 +311,7 @@ describe('SequenceExamWrapper', () => {
     expect(screen.getByTestId('start-exam-button')).toHaveTextContent('Continue to my proctored exam.');
   });
 
-  it('Instructions for ready to submit status', () => {
+  it.each([10, 0])('Shows correct instructions when attempt status is ready_to_submit and %s seconds left', async (secondsLeft) => {
     store.getState = () => ({
       examState: {
         isLoading: false,
@@ -311,7 +321,9 @@ describe('SequenceExamWrapper', () => {
           can_verify: true,
         },
         proctoringSettings: {},
-        activeAttempt: {},
+        activeAttempt: {
+          time_remaining_seconds: secondsLeft,
+        },
         exam: {
           type: ExamType.TIMED,
           time_limit_mins: 30,
@@ -323,7 +335,7 @@ describe('SequenceExamWrapper', () => {
       },
     });
 
-    const { getByTestId } = render(
+    const { queryByTestId } = render(
       <ExamStateProvider>
         <Instructions>
           <div>Sequence</div>
@@ -331,7 +343,22 @@ describe('SequenceExamWrapper', () => {
       </ExamStateProvider>,
       { store },
     );
-    expect(getByTestId('exam-instructions-title')).toHaveTextContent('Are you sure that you want to submit your timed exam?');
+
+    expect(queryByTestId('exam-instructions-title')).toHaveTextContent('Are you sure that you want to submit your timed exam?');
+    fireEvent.click(queryByTestId('end-exam-button'));
+    expect(submitExam).toHaveBeenCalled();
+    const continueButton = queryByTestId('continue-exam-button');
+    if (secondsLeft > 0) {
+      expect(continueButton).toBeInTheDocument();
+      fireEvent.click(continueButton);
+      expect(continueExam).toHaveBeenCalledTimes(1);
+      act(() => {
+        Emitter.emit(TIMER_REACHED_NULL);
+      });
+      expect(queryByTestId('continue-exam-button')).not.toBeInTheDocument();
+    } else {
+      expect(continueButton).not.toBeInTheDocument();
+    }
   });
 
   it('Instructions for submitted status', () => {

@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Container } from '@edx/paragon';
+import { Container, Button } from '@edx/paragon';
 import ExamStateContext from '../../../context';
 import { ExamStatus } from '../../../constants';
 import WarningModal from '../WarningModal';
@@ -11,12 +12,13 @@ import DefaultInstructions from './DefaultInstructions';
 import DownloadButtons from './DownloadButtons';
 import Footer from '../Footer';
 
-const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
+const DownloadSoftwareProctoredExamInstructions = ({ intl, skipProctoredExam }) => {
   const state = useContext(ExamStateContext);
   const {
     proctoringSettings,
     exam,
     getExamAttemptsData,
+    allowProctoringOptOut,
   } = state;
   const {
     attempt,
@@ -120,6 +122,18 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
           </p>
         )}
       </Container>
+      {allowProctoringOptOut && (
+      <Button
+        data-testid="start-exam-without-proctoring-button"
+        variant="link"
+        onClick={skipProctoredExam}
+      >
+        <FormattedMessage
+          id="exam.startExamInstructions.startExamButtonText"
+          defaultMessage="Take this exam without proctoring."
+        />
+      </Button>
+      )}
       <Footer />
     </div>
   );
@@ -127,6 +141,7 @@ const DownloadSoftwareProctoredExamInstructions = ({ intl }) => {
 
 DownloadSoftwareProctoredExamInstructions.propTypes = {
   intl: intlShape.isRequired,
+  skipProctoredExam: PropTypes.func.isRequired,
 };
 
 export default injectIntl(DownloadSoftwareProctoredExamInstructions);

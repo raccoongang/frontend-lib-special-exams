@@ -8,6 +8,7 @@ export const examSlice = createSlice({
     timeIsOver: false,
     activeAttempt: null, // has the same structure as attempt in exam object
     allowProctoringOptOut: false,
+    initialDataLoaded: false,
     proctoringSettings: {
       platform_name: '',
       contact_us: '',
@@ -79,6 +80,9 @@ export const examSlice = createSlice({
       state.isLoading = payload.isLoading;
     },
     setExamState: (state, { payload }) => {
+      if (!state.initialDataLoaded) {
+        state.initialDataLoaded = true;
+      }
       state.exam = payload.exam;
       state.activeAttempt = payload.activeAttempt;
     },

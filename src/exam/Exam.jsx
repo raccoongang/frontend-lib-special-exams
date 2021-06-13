@@ -27,12 +27,14 @@ const Exam = ({ isTimeLimited, children }) => {
   const { type: examType, content_id: sequenceId, id: examId } = exam || {};
 
   useEffect(() => {
-    if (examId) {
-      getProctoringSettings();
-    }
-    if (examType === ExamType.PROCTORED) {
-      getVerificationData();
-      getAllowProctoringOptOut(sequenceId);
+    if (isTimeLimited) {
+      if (examId) {
+        getProctoringSettings();
+      }
+      if (examType === ExamType.PROCTORED) {
+        getVerificationData();
+        getAllowProctoringOptOut(sequenceId);
+      }
     }
 
     // this makes sure useEffect gets called only one time after the exam has been fetched

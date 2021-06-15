@@ -59,7 +59,7 @@ Object {
       "time_limit_mins": 30,
       "type": "timed",
     },
-    "initialDataLoaded": true,
+    "isInitialDataLoaded": true,
     "isLoading": false,
     "proctoringSettings": Object {
       "contact_us": "",
@@ -219,7 +219,7 @@ Object {
       "time_limit_mins": 30,
       "type": "timed",
     },
-    "initialDataLoaded": true,
+    "isInitialDataLoaded": true,
     "isLoading": false,
     "proctoringSettings": Object {
       "contact_us": "",

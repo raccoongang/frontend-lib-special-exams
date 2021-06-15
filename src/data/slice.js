@@ -8,7 +8,11 @@ export const examSlice = createSlice({
     timeIsOver: false,
     activeAttempt: null, // has the same structure as attempt in exam object
     allowProctoringOptOut: false,
-    initialDataLoaded: false,
+    // This flag indicates if initial call to the exam attempt API has been made
+    // (a call is always made when the application is first rendered to
+    // know if there is an active exam attempt), if true then when we change sequences
+    // we make the API call only if exam is time limited or we have attempt in progress
+    isInitialDataLoaded: false,
     proctoringSettings: {
       platform_name: '',
       contact_us: '',
@@ -80,8 +84,8 @@ export const examSlice = createSlice({
       state.isLoading = payload.isLoading;
     },
     setExamState: (state, { payload }) => {
-      if (!state.initialDataLoaded) {
-        state.initialDataLoaded = true;
+      if (!state.isInitialDataLoaded) {
+        state.isInitialDataLoaded = true;
       }
       state.exam = payload.exam;
       state.activeAttempt = payload.activeAttempt;

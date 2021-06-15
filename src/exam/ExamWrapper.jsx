@@ -9,13 +9,13 @@ import ExamStateContext from '../context';
 const ExamWrapper = ({ children, ...props }) => {
   const state = useContext(ExamStateContext);
   const { sequence, courseId } = props;
-  const { getExamAttemptsData, initialDataLoaded, activeAttempt } = state;
+  const { getExamAttemptsData, isInitialDataLoaded, activeAttempt } = state;
   const loadInitialData = async () => {
     await getExamAttemptsData(courseId, sequence.id);
   };
 
   useEffect(() => {
-    if (sequence.isTimeLimited || !initialDataLoaded || activeAttempt) {
+    if (sequence.isTimeLimited || !isInitialDataLoaded || activeAttempt) {
       loadInitialData();
     }
   }, []);

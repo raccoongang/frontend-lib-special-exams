@@ -231,13 +231,19 @@ export function stopExam() {
     }
 
     const { attempt_id: attemptId, exam_url_path: examUrl } = activeAttempt;
+    if (!exam.attempt || attemptId !== exam.attempt.attempt_id) {
+      try {
+        await stopAttempt(attemptId);
+        window.location.href = examUrl;
+      } catch (error) {
+        handleAPIError(error, dispatch);
+      }
+      return;
+    }
+
     await updateAttemptAfter(
       exam.course_id, exam.content_id, stopAttempt(attemptId), true,
     )(dispatch);
-
-    if (attemptId !== exam.attempt.attempt_id) {
-      window.location.href = examUrl;
-    }
   };
 }
 
@@ -320,7 +326,7 @@ export function expireExam() {
     }
 
     await updateAttemptAfter(
-      exam.course_id, exam.content_id, submitAttempt(attemptId),
+      activeAttempt.course_id, exam.content_id, submitAttempt(attemptId),
     )(dispatch);
     dispatch(expireExamAttempt());
 

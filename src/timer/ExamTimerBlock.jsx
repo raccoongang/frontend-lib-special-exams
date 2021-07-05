@@ -10,16 +10,19 @@ import {
   TIMER_IS_CRITICALLY_LOW,
   TIMER_IS_LOW,
   TIMER_LIMIT_REACHED,
+  TIMER_REACHED_NULL,
 } from './events';
 
 /**
  * Exam timer block component.
  */
 const ExamTimerBlock = injectIntl(({
-  attempt, stopExamAttempt, expireExamAttempt, pollExamAttempt, intl, pingAttempt,
+  attempt, stopExamAttempt, expireExamAttempt,
+  pollExamAttempt, intl, pingAttempt, submitExam,
 }) => {
   const [isShowMore, showMore, showLess] = useToggle(false);
   const [alertVariant, setAlertVariant] = useState('info');
+  const [timeReachedNull, setTimeReachedNull] = useState(false);
 
   if (!attempt || !IS_STARTED_STATUS(attempt.attempt_status)) {
     return null;
@@ -27,16 +30,29 @@ const ExamTimerBlock = injectIntl(({
 
   const onLowTime = () => setAlertVariant('warning');
   const onCriticalLowTime = () => setAlertVariant('danger');
+  const onTimeReachedNull = () => setTimeReachedNull(true);
+
+  const handleEndExamClick = () => {
+    // if timer reached 00:00 submit exam right away
+    // instead of trying to move user to ready_to_submit page
+    if (timeReachedNull) {
+      submitExam();
+    } else {
+      stopExamAttempt();
+    }
+  };
 
   useEffect(() => {
     Emitter.once(TIMER_IS_LOW, onLowTime);
     Emitter.once(TIMER_IS_CRITICALLY_LOW, onCriticalLowTime);
     Emitter.once(TIMER_LIMIT_REACHED, expireExamAttempt);
+    Emitter.once(TIMER_REACHED_NULL, onTimeReachedNull);
 
     return () => {
       Emitter.off(TIMER_IS_LOW, onLowTime);
       Emitter.off(TIMER_IS_CRITICALLY_LOW, onCriticalLowTime);
       Emitter.off(TIMER_LIMIT_REACHED, expireExamAttempt);
+      Emitter.off(TIMER_REACHED_NULL, onTimeReachedNull);
     };
   }, []);
 
@@ -95,7 +111,7 @@ const ExamTimerBlock = injectIntl(({
 
             {attempt.attempt_status !== ExamStatus.READY_TO_SUBMIT
               && (
-              <Button className="mr-3" variant="outline-primary" onClick={stopExamAttempt}>
+              <Button className="mr-3" variant="outline-primary" onClick={handleEndExamClick}>
                 <FormattedMessage
                   id="exam.examTimer.endExamBtn"
                   defaultMessage="End My Exam"
@@ -123,6 +139,7 @@ ExamTimerBlock.propTypes = {
   }),
   stopExamAttempt: PropTypes.func.isRequired,
   expireExamAttempt: PropTypes.func.isRequired,
+  submitExam: PropTypes.func.isRequired,
 };
 
 export default ExamTimerBlock;

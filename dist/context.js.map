@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/context.jsx"],"names":["ExamStateContext","React","createContext"],"mappings":";;;;;;;AAAA;;;;AAEA,IAAMA,gBAAgB,gBAAGC,eAAMC,aAAN,CAAoB,EAApB,CAAzB;;eACeF,gB","sourcesContent":["import React from 'react';\n\nconst ExamStateContext = React.createContext({});\nexport default ExamStateContext;\n"],"file":"context.js"}

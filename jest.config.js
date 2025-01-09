@@ -11,4 +11,7 @@ module.exports = createConfig('jest', {
     'src/setupTest.js',
     'src/i18n',
   ],
+  moduleNameMapper: {
+    '^axios$': 'axios/dist/axios.js',
+  },
 });

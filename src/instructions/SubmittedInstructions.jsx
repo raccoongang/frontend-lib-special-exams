@@ -8,7 +8,7 @@ import { SubmittedOnboardingExamInstructions } from './onboarding_exam';
 import { SubmittedTimedExamInstructions } from './timed_exam';
 import Footer from './proctored_exam/Footer';
 
-const SubmittedExamInstructions = ({ examType }) => {
+const SubmittedExamInstructions = ({ examType, courseId }) => {
   const renderInstructions = () => {
     switch (examType) {
       case ExamType.ONBOARDING:
@@ -18,7 +18,7 @@ const SubmittedExamInstructions = ({ examType }) => {
       case ExamType.PROCTORED:
         return <SubmittedProctoredExamInstructions />;
       case ExamType.TIMED:
-        return <SubmittedTimedExamInstructions />;
+        return <SubmittedTimedExamInstructions courseId={courseId} />;
       default:
         return null;
     }
@@ -36,6 +36,7 @@ const SubmittedExamInstructions = ({ examType }) => {
 
 SubmittedExamInstructions.propTypes = {
   examType: PropTypes.string.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default SubmittedExamInstructions;

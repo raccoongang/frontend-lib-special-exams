@@ -31,6 +31,7 @@ const Instructions = ({ children }) => {
     prerequisite_status: prerequisitesData,
     passed_due_date: passedDueDate,
     hide_after_due: hideAfterDue,
+    course_id: courseId,
   } = exam || {};
   const prerequisitesPassed = prerequisitesData ? prerequisitesData.are_prerequisites_satisifed : true;
   const {
@@ -75,9 +76,9 @@ const Instructions = ({ children }) => {
       if (examType === ExamType.TIMED && passedDueDate && !hideAfterDue) {
         return children;
       }
-      return <SubmittedExamInstructions examType={examType} />;
+      return <SubmittedExamInstructions examType={examType} courseId={courseId} />;
     case attemptStatus === ExamStatus.SECOND_REVIEW_REQUIRED:
-      return <SubmittedExamInstructions examType={examType} />;
+      return <SubmittedExamInstructions examType={examType} courseId={courseId} />;
     case attemptStatus === ExamStatus.VERIFIED:
       return <VerifiedExamInstructions examType={examType} />;
     case attemptStatus === ExamStatus.REJECTED:

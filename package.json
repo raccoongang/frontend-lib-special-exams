@@ -1,6 +1,6 @@
 {
   "name": "@raccoongang/frontend-lib-special-exams",
-  "version": "1.14.0-tokens.2",
+  "version": "1.14.0-tokens.3",
   "description": "Special exams lib",
   "main": "dist/index.js",
   "release": {
